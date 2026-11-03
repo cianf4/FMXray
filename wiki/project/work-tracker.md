@@ -36,5 +36,5 @@ confidence: medium
 
 | Work item | Blocker | Needed from | Next check |
 | --- | --- | --- | --- |
-| V1, V4 | confronto dei valori nel gioco | utente | prossima sessione |
-| V5, V7 | nuovo `Roma.fm` dopo una sessione | utente | prossima sessione |
+| V1, V4 | rimandate dall'utente (2026-11-03): confronto con il gioco e con un tool esterno dopo l'uscita ufficiale di FM27 | utente | dopo il 2026-11-10 |
+| V5, V7 | nuovo `Roma.fm` dopo una sessione; spostate in SP4 (storico e newgen) | utente | inizio SP4 |

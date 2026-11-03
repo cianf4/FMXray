@@ -14,7 +14,7 @@ confidence: medium
 ## Current Work State
 
 - Status: in progress (SP1 quasi chiuso)
-- Goal: chiudere SP1 (verifiche V1, V4, V5, V7) e partire con SP2
+- Goal: merge di SP1 e partire con SP2 (V1/V4 rimandate dall'utente all'uscita di FM27; V5/V7 in SP4)
 - Last completed step: Task 1–8 del piano SP1 committati (`568c2d7..2025c37`), suite 55 test verde; import reale di `Roma.fm` fatto
 - Current branch: `sp1-fondamenta`
 - Last commit: `2025c37`
@@ -24,10 +24,8 @@ confidence: medium
 
 | Order | Task | Start files | Done when | Verification command | Notes / blockers |
 | --- | --- | --- | --- | --- | --- |
-| 1 | V1/V4: raccogliere il confronto nel gioco dell'utente e registrare l'esito (senza valori dei giocatori) in `wiki/reference/fmsave.md` | `local/v1-check.md`, `wiki/reference/fmsave.md` | esito registrato; fattore monetario stimato | Not verified - confronto manuale nel gioco | i valori restano in `local/` |
-| 2 | V5/V7: importare il nuovo `Roma.fm` dalla cartella cloud dopo una sessione di gioco e confrontare `uid`/`unique_id` | `local/saves/fm27/`, `src/fmxray/adapters/fmsave_source/` | esito in `wiki/reference/fmsave.md` | `uv run fmxray import "local/saves/fm27/Roma.fm" --career Roma` | serve un nuovo save dall'utente |
-| 3 | Revisione finale del branch SP1, merge in `main` (lo fa l'utente) | `docs/superpowers/plans/2026-11-03-sp1-fondamenta.md` | CI verde su Linux e Windows | `uv run pytest` | |
-| 4 | SP2: spec del motore di ricerca | spec madre §7, §12 | spec approvata | Not verified - documento | |
+| 1 | Merge di SP1 in `main` dopo CI verde, merge in `main` (lo fa l'utente) | `docs/superpowers/plans/2026-11-03-sp1-fondamenta.md` | CI verde su Linux e Windows | `uv run pytest` | |
+| 2 | SP2: spec del motore di ricerca | spec madre §7, §12 | spec approvata | Not verified - documento | |
 
 ## Blockers
 
