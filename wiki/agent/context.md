@@ -1,12 +1,12 @@
 ---
 title: Agent Context
-updated: 2026-10-31
+updated: 2026-11-03
 sources:
   - wiki/index.md
   - wiki/project/decisions.md
   - wiki/project/requirements.md
   - wiki/reference/fmsave.md
-source_commit: unknown
+source_commit: 2025c37
 confidence: medium
 ---
 
@@ -15,10 +15,10 @@ confidence: medium
 ## Project Snapshot
 
 - Project: FM X-Ray
-- Purpose: scouting tool personale e in sola lettura per FM26 (poi FM27) che legge i save e mostra tutto il database giocatori, compresi CA, PA e hidden. Fonte: [project brief](../project-docs/project-brief.md)
-- Current status: brainstorming in corso, nessun codice ([stato](../project/status.md))
-- Primary languages/frameworks: Python 3.12+ con fmsave; resto dello stack da decidere
-- Main runtime/deploy target: locale, Windows e Linux; forma dell'app da decidere
+- Purpose: scouting tool personale e in sola lettura per FM27 (FM26 nei limiti di fmsave) che legge i save e mostra tutto il database giocatori, compresi CA, PA e hidden. Fonte: [project brief](../project-docs/project-brief.md)
+- Current status: SP1 (Fondamenta) implementato sul branch `sp1-fondamenta` ([stato](../project/status.md))
+- Primary languages/frameworks: Python 3.14, fmsave 0.9.3, Polars 2.x, SQLite; UI PySide6 da SP3
+- Main runtime/deploy target: app desktop locale, Windows e Linux
 
 ## Architecture At A Glance
 
@@ -26,7 +26,7 @@ confidence: medium
 | --- | --- | --- |
 | Fonte dati (fmsave) | lettura del save, dietro un unico adattatore | [architettura](../engineering/architecture.md), [fmsave](../reference/fmsave.md) |
 | Fonte dati RAM (Fase 3) | seconda fonte dello stesso modello | [decisioni](../project/decisions.md) D6 |
-| Resto del tool | storage, filtri, rating, proiezioni, UI | da definire nella spec madre |
+| Moduli | domain, application, adapters, cli | [moduli](../modules/README.md) |
 
 ## Non-Negotiable Technical Rules
 
@@ -41,11 +41,12 @@ confidence: medium
 
 | Task | Command | Working directory | Evidence |
 | --- | --- | --- | --- |
-| Setup | unknown | `.` | nessun manifest |
-| Test | unknown | `.` | nessun test |
-| Lint | unknown | `.` | nessuna configurazione |
-| Build | unknown | `.` | nessuna configurazione |
-| Ispezione rapida di un save | `uvx fmsave info <save>.fm` (la lancia l'utente) | `.` | [README fmsave](https://github.com/rhiever/fmsave) |
+| Setup | `uv sync` (la lancia l'utente) | `.` | `pyproject.toml` |
+| Test | `uv run pytest` | `.` | `pyproject.toml` |
+| Lint | `uv run ruff check && uv run ruff format --check && uv run mypy src tests && uv run lint-imports` | `.` | `.github/workflows/ci.yml` |
+| Build | Not verified - nessun eseguibile prima di SP8 | `.` | spec madre §11 |
+| Importare un save | `uv run fmxray import "local/saves/fm27/Roma.fm" --career Roma` | `.` | `src/fmxray/cli/commands.py` |
+| Ispezione rapida di un save | `uv run fmsave info "local/saves/fm27/Roma.fm"` | `.` | [README fmsave](https://github.com/rhiever/fmsave) |
 
 ## Read First
 

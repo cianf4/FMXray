@@ -26,7 +26,7 @@ Decade in fretta: rileggere il changelog prima di ogni aggiornamento.
 | Garanzie | sola lettura; nessuna connessione di rete; non legge la memoria del gioco |
 | Licenza | MIT; progetto non affiliato a SI/SEGA |
 | Python | 3.12+ |
-| Installazione | `pip install fmsave`, `pip install "fmsave[pandas]"`; prova senza installare: `uvx fmsave info <save>.fm` |
+| Installazione | `pip install fmsave`, `pip install "fmsave[pandas]"`; nel progetto: `uv run fmsave info "local/saves/fm27/Roma.fm"` |
 | CLI | `info`, `export` (serve uno scope: `--club`, `--managed-club`, `--competition`, `--nation`, `--all`), `validate` |
 | Ritmo di rilascio | 26 release dal 2026-09-18 (0.4.0) al 2026-10-30 (0.9.0), circa 4 a settimana |
 | Contributi | il maintainer non fa merge di PR esterne: si apre una issue, e chi la apre viene citato quando la modifica esce. Mai allegare o linkare save |
@@ -157,3 +157,5 @@ build `27.0.0+2493426` (**non registrata**: fmsave usa i layout della `2486695` 
 | `SaveInfo` | `game`, `build`, `build_number`, `known_build`, `db_version`, `game_date` (V6: 2026-09-12), `save_name`, `file_name` |
 | `field_status(Player, "attributes.finishing")` | path con punti; descrive FM26; su FM27 vale sempre `unconfirmed` |
 | `transfer_value_state` | `ok`, `zero`, `unset`, `placeholder` |
+| `fmxray import` completo (V3) | ~33 s; snapshot Parquet 16 MB; re-import dello stesso file: solo hash |
+| Record incompleti | 2 giocatori senza nome, età e personalità (blocchi persona non decodificati) |

@@ -23,19 +23,25 @@ confidence: high
 
 | Pagina | Stato |
 | --- | --- |
-| [Architettura](engineering/architecture.md) | solo vincoli decisi |
-| [Modello dati](engineering/data-model.md) | stub |
-| [Sviluppo](engineering/development.md) | stub |
-| [Testing](engineering/testing.md) | solo vincoli |
+| [Architettura](engineering/architecture.md) | strati e contratti di import |
+| [Modello dati](engineering/data-model.md) | snapshot e catalogo |
+| [Sviluppo](engineering/development.md) | comandi |
+| [Testing](engineering/testing.md) | livelli di test e CI |
 | [Operations](engineering/operations.md) | stub |
 | [Troubleshooting](engineering/troubleshooting.md) | problemi documentati da fmsave |
-| [Mappa delle modifiche](engineering/change-map.md) | stub |
+| [Mappa delle modifiche](engineering/change-map.md) | dove intervenire |
 
 ## Modules
 
 | Pagina | Stato |
 | --- | --- |
-| [Moduli](modules/README.md) | nessun modulo ancora |
+| [Moduli](modules/README.md) | indice |
+| [domain](modules/domain.md) | catalogo campi, snapshot |
+| [application](modules/application.md) | porte, ImportSave, ShowPlayer |
+| [fmsave-source](modules/fmsave-source.md) | unico punto che legge fmsave |
+| [parquet-store](modules/parquet-store.md) | snapshot su Parquet |
+| [sqlite-catalog](modules/sqlite-catalog.md) | catalogo su SQLite |
+| [cli](modules/cli.md) | comandi e composition root |
 
 ## Project
 
