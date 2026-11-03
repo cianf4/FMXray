@@ -1,0 +1,279 @@
+---
+title: Wiki Schema
+updated: 2026-10-31
+confidence: high
+---
+
+# Wiki Schema for This Repo
+
+This file is the repo-specific constitution for the wiki. Edit it when the
+repository needs different conventions. Wiki workflows must read this file
+before editing wiki content.
+
+## Mission
+
+This wiki is an engineering-first software project wiki. It exists to help
+engineers change the software safely, help project leads understand state and
+risk, preserve agent activity and handoff context, and prepare reusable project
+documentation.
+
+## Truth hierarchy
+
+1. Source code, tests, migrations, configs, CI, and runtime manifests.
+2. `engineering/` and `modules/`.
+3. `project/`.
+4. `project-docs/`.
+5. `agent/` and historical logs.
+
+Engineering is authoritative. Project and project-docs pages must not
+contradict engineering pages or source evidence.
+
+## Scope
+
+**In scope**:
+
+- Core architecture, module boundaries, data/control flows, and invariants.
+- Public interfaces: APIs, CLIs, SDKs, jobs, events, services, and exported
+  functions/classes.
+- Development workflow: setup, commands, tests, linters, build, CI.
+- Runtime/operations: configuration, env vars, deploy, migrations, external
+  services, monitoring, troubleshooting.
+- Project management: status, roadmap, milestones, requirements, risks, and
+  decisions.
+- Reusable project documentation: briefs, value proposition, use cases,
+  audience, impact, evidence, demo material, FAQ.
+- Agent continuity: context, activity, and handoff notes under `agent/`.
+- **Repo-specific:** external reference material under `reference/` (the
+  libraries and tools FM X-Ray depends on or is compared with), with the date
+  it was checked.
+
+**Out of scope**:
+
+- Generated artifacts, build output, caches, logs, fixtures, and vendored
+  dependencies unless they define public behavior.
+- Internal implementation details that change frequently and do not affect how
+  engineers safely change the system.
+- `.git/`, dependency folders, virtual environments, `dist/`, `build/`,
+  `.next/`, `node_modules/`, `__pycache__/`, and lockfiles unless the repo
+  schema explicitly says otherwise.
+- Unsupported claims in `project-docs/`.
+- **Repo-specific:** any game data owned by Sports Interactive / SEGA (save
+  files, player databases, extracted names). The wiki may describe data
+  *shapes*, never data *content*.
+
+## Directory layout
+
+```text
+wiki/
+├── index.md
+├── SCHEMA.md
+├── log.md
+├── overview.md
+├── overview-fm-x-ray.md
+├── engineering/
+│   ├── architecture.md
+│   ├── data-model.md
+│   ├── development.md
+│   ├── testing.md
+│   ├── operations.md
+│   ├── troubleshooting.md
+│   └── change-map.md
+├── modules/
+│   └── <module-or-area>.md
+├── project/
+│   ├── status.md
+│   ├── work-tracker.md
+│   ├── roadmap.md
+│   ├── milestones.md
+│   ├── risks.md
+│   ├── requirements.md
+│   └── decisions.md
+├── project-docs/
+│   ├── project-brief.md
+│   ├── value-proposition.md
+│   ├── use-cases.md
+│   ├── audience.md
+│   ├── impact.md
+│   ├── evidence.md
+│   ├── demo-materials.md
+│   └── faq.md
+├── reference/
+│   ├── fmsave.md
+│   └── prior-art.md
+├── agent/
+│   ├── context.md
+│   ├── activity.md
+│   └── handoff.md
+└── glossary.md
+```
+
+## Page granularity
+
+- One module page per coherent code area.
+- Keep `engineering/` pages cross-cutting and operational.
+- Keep `project/` pages about delivery state, requirements, risks, and
+  decisions.
+- Keep `project/work-tracker.md` as the compact active/planned/completed/blocked
+  work register that links project state to agent handoff tasks.
+- Keep `project-docs/` pages reusable and evidence-backed.
+- Keep `reference/` pages factual, dated, and linked to their external source.
+- Keep `agent/` pages concise and useful for future sessions.
+- Keep `overview-fm-x-ray.md` as the portable project card for
+  SecondBrain import.
+
+## Portable project overview
+
+Each project wiki must include:
+
+```text
+overview-fm-x-ray.md
+```
+
+This page is a concise, portable summary of the project. It must link back to
+the detailed technical wiki and include a `## Personal Wiki Export` section.
+
+Required content:
+
+- what the project is;
+- why it exists;
+- current status;
+- main stack or technical areas;
+- milestones or next steps;
+- important decisions to remember;
+- links to the most relevant engineering, module, project, and project-docs
+  pages;
+- `## Personal Wiki Export` for import into a general SecondBrain vault.
+
+The `Personal Wiki Export` section should include:
+
+- project name and short description;
+- current status;
+- role of the project in the user's work/life;
+- personal motivation, only if known;
+- technologies or skills represented;
+- important next steps;
+- long-term notes.
+
+Do not invent personal motivation, career goals, subjective meaning, or user
+priorities. If unknown, write `Da confermare.`
+
+## Module page template
+
+Use these sections when evidence exists:
+
+```markdown
+## Purpose
+## Key files
+## Public interface
+## Data/control flow
+## Invariants
+## How to change this safely
+## Verification
+## Common failure modes
+## Dependencies
+## Related tests
+## Open risks
+```
+
+## Agent continuity
+
+`agent/context.md` is the fast onboarding page for coding agents. It should
+include:
+
+- project snapshot;
+- architecture or main areas;
+- non-negotiable technical rules;
+- setup, test, lint, and build commands;
+- files to read first;
+- risks and invariants;
+- links to the most important wiki pages.
+
+`agent/handoff.md` is the pass-the-baton page. It must include:
+
+- current work state;
+- last completed step;
+- prioritized next tasks;
+- blockers and risks;
+- commands already run and results;
+- work not to redo;
+- git branch, last commit, and clean/dirty worktree when git is available;
+- `## Baton For Next Coding Agent`.
+
+The baton section must use this table:
+
+```markdown
+| Order | Task | Start files | Done when | Verification command | Notes / blockers |
+| --- | --- | --- | --- | --- | --- |
+```
+
+Each task must have start files, done criteria, and a verification command. If
+verification is not possible, write `Not verified - <reason>`.
+
+`agent/activity.md` is append-only. Add an entry after non-trivial source,
+config, project, or wiki operations with agent, trigger, intent, actions, files
+changed, validation, decisions, and follow-up.
+
+## Decay policy
+
+- Fast decay: `modules/*`, `engineering/data-model.md`,
+  `engineering/testing.md`, `engineering/operations.md`,
+  `engineering/change-map.md`, `reference/fmsave.md` (fmsave releases several
+  times a week).
+- Medium decay: `overview.md`, `engineering/architecture.md`,
+  `overview-fm-x-ray.md`, `project/status.md`, `project/roadmap.md`,
+  `project/risks.md`, `project/work-tracker.md`, `agent/handoff.md`,
+  `reference/prior-art.md`.
+- Slow decay: `project/decisions.md`, `project-docs/*`, `glossary.md`,
+  `agent/context.md`.
+
+Lint should flag pages as low confidence when five or more commits touched their
+listed sources since `source_commit`, when sources are missing, or when claims
+are unsupported.
+
+## Sources before code exists
+
+Until the master spec (`docs/superpowers/specs/*-fm-x-ray-design.md`) exists, pages may
+cite `brainstorming 2026-10-31` (the design conversation with the user) and
+external URLs as sources, with `confidence: medium`. Once the spec is written,
+replace those citations with the spec file.
+
+## Legacy docs
+
+If these root-level docs exist and their content is absorbed into the wiki, lint
+may propose retirement:
+
+- `context_map.md`
+- `project_status.md`
+- `BUILD_PHASES.md`
+- `ARCHITECTURE.md`
+- `ROADMAP.md`
+- `CHANGELOG.md` if it duplicates `agent/activity.md` or `log.md`
+
+Never delete automatically.
+
+## Style preferences
+
+- **Wiki prose is in Italian** (code, identifiers and commands stay in English).
+- Use markdown tables for file maps, commands, APIs, config, risks,
+  requirements, and claim support.
+- Use Mermaid for flows, module graphs, state machines, and architecture maps.
+- Use standard relative markdown links.
+- Dates use ISO format (`YYYY-MM-DD`).
+- Headings use sentence case.
+
+## Question policy
+
+- `/wiki-init`: ask once to confirm scope before writing.
+- `/wiki-ingest` without a target: ask what to ingest.
+- `/wiki-sync`: do not ask; run only for small source changes.
+- `/wiki-lint`: do not ask; produce a read-only report.
+
+## What this repo is about
+
+FM X-Ray is a personal, single-player, read-only scouting tool for Football
+Manager 26 (FM27 later). It reads career save files through the `fmsave`
+library and shows the whole player database with as much data as possible,
+including CA, PA and hidden attributes: filtered search, sortable table, player
+card, CSV export; later role ratings with editable weights, projected
+attributes, snapshots over time, newgen detection and an optional live
+memory-reading source. It distributes code only, never game data.

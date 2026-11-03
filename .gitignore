@@ -1,0 +1,30 @@
+# --- Game data (Sports Interactive / SEGA): never commit ---
+*.fm
+*.fmf
+# local scratch area for saves, snapshots and caches
+/local/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Secrets / env ---
+.env
+.env.*
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
