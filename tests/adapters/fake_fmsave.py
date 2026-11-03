@@ -95,6 +95,7 @@ def make_fake_module(
         open=open_,
         field_status=field_status,
         Player=Player,
+        FmsaveError=FmsaveError,
         UnsupportedGameError=UnsupportedGameError,
         CorruptSaveError=CorruptSaveError,
         NotAFmSaveError=NotAFmSaveError,

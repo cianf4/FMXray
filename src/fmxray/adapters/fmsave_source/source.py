@@ -29,7 +29,8 @@ class FmsaveSaveSource:
                     columns = save.players().to_columns()
         except fm.UnsupportedGameError as error:
             raise UnsupportedSaveError(str(error)) from error
-        except (fm.CorruptSaveError, fm.NotAFmSaveError, fm.ReaderCheckError) as error:
+        except fm.FmsaveError as error:
+            # Corrupt, not a save, layout check failed, changed while reading, ...
             raise UnreadableSaveError(str(error)) from error
 
         return SaveReading(

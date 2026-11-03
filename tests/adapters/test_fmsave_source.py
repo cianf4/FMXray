@@ -60,6 +60,7 @@ def test_unknown_build_warning_is_recorded() -> None:
         (fake_fmsave.CorruptSaveError("damaged"), UnreadableSaveError),
         (fake_fmsave.NotAFmSaveError("not a save"), UnreadableSaveError),
         (fake_fmsave.ReaderCheckError("layout"), UnreadableSaveError),
+        (fake_fmsave.FmsaveError("save changed while reading"), UnreadableSaveError),
     ],
 )
 def test_errors_are_translated(raised: Exception, expected: type[Exception]) -> None:
