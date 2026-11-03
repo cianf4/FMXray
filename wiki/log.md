@@ -23,3 +23,5 @@ confidence: high
 
 ## [2026-11-03] sync | spec madre
 - Decisioni D12–D20 aggiunte; handoff e stato aggiornati alla spec madre `docs/superpowers/specs/2026-11-03-fm-x-ray-design.md`
+- [2026-11-03] sync | reference/fmsave.md: verifiche su Roma.fm (FM27, fmsave 0.9.3)
+- [2026-11-03] sync | D7 → FM27 obiettivo principale; spec SP1 scritta
