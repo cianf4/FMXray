@@ -26,7 +26,7 @@ Decade in fretta: rileggere il changelog prima di ogni aggiornamento.
 | Garanzie | sola lettura; nessuna connessione di rete; non legge la memoria del gioco |
 | Licenza | MIT; progetto non affiliato a SI/SEGA |
 | Python | 3.12+ |
-| Installazione | `pip install fmsave`, `pip install "fmsave[pandas]"`; prova senza installare: `uvx fmsave info <save>.fm` |
+| Installazione | `pip install fmsave`, `pip install "fmsave[pandas]"`; nel progetto: `uv run fmsave info "local/saves/fm27/Roma.fm"` |
 | CLI | `info`, `export` (serve uno scope: `--club`, `--managed-club`, `--competition`, `--nation`, `--all`), `validate` |
 | Ritmo di rilascio | 26 release dal 2026-09-18 (0.4.0) al 2026-10-30 (0.9.0), circa 4 a settimana |
 | Contributi | il maintainer non fa merge di PR esterne: si apre una issue, e chi la apre viene citato quando la modifica esce. Mai allegare o linkare save |
@@ -135,3 +135,27 @@ della nostra Fase 1.
 - Tempi di lettura e memoria su un save grande (non documentati).
 - Significato di `potential_range_code` (PA espressa come intervallo?).
 - Come si presentano i newgen: `unique_id` nuovo o `None`? (la 0.5.9 dice "newly generated players read").
+
+## Verifiche su un save reale (2026-11-03)
+
+Save FM27 dell'utente (`local/saves/fm27/Roma.fm`, 120 MB, data di gioco 2026-09-12), fmsave **0.9.3**,
+build `27.0.0+2493426` (**non registrata**: fmsave usa i layout della `2486695` dove lo schema coincide).
+
+| Voce | Risultato |
+| --- | --- |
+| `fmsave validate --json` (tutti i 30 reader) | ~63 s reali su Linux (V3, prima misura) |
+| `players()` | ok, **126.427** giocatori, 218 colonne piatte |
+| 13 hidden (5 attributi + 8 personalità) | presenti, copertura 100% (V1 strutturale; da verificare nel gioco) |
+| CA / PA | copertura 100%; `potential_range_code` sempre vuoto |
+| `unique_id` | 99,99% valorizzato |
+| `transfer_value` | 73% (resto: stato non OK) |
+| `contract_clauses` | 99,9%; 9532 code di contratto non interpretate |
+| Reader non ok | `finances`, `sponsorships` (failed), `training`, `mentoring` (error): non ci servono |
+| `field_status` | tutti i 747 campi **unconfirmed** su FM27 |
+| `players()` da solo | ~21 s + ~5 s per `to_columns()` (V3) |
+| Clausole rescissorie (V2) | presenti come `contract_clauses` (tuple di dict `kind`, `kind_code`, `parameter`, `value`): `minimum_fee_release` 4796, `minimum_fee_release_domestic` 1759, `minimum_fee_release_foreign` 228, `relegation_release` 170, `minimum_fee_release_domestic_higher_division` 53, `non_promotion_release` 8; 42 tipi in totale, molti `unknown` |
+| `SaveInfo` | `game`, `build`, `build_number`, `known_build`, `db_version`, `game_date` (V6: 2026-09-12), `save_name`, `file_name` |
+| `field_status(Player, "attributes.finishing")` | path con punti; descrive FM26; su FM27 vale sempre `unconfirmed` |
+| `transfer_value_state` | `ok`, `zero`, `unset`, `placeholder` |
+| `fmxray import` completo (V3) | ~33 s; snapshot Parquet 16 MB; re-import dello stesso file: solo hash |
+| Record incompleti | 2 giocatori senza nome, età e personalità (blocchi persona non decodificati) |

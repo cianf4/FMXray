@@ -15,19 +15,20 @@ confidence: medium
 
 | Priority | Work item | Status | Owner | Evidence | Next verification |
 | --- | --- | --- | --- | --- | --- |
-| P0 | Brainstorming → spec madre `docs/superpowers/specs/2026-10-31-fm-x-ray-design.md` | in progress | agent + utente | [decisioni](decisions.md), [handoff](../agent/handoff.md) | Not verified - nessun codice; fatto quando l'utente approva la spec |
+| P0 | SP1 Fondamenta: verifiche finali e merge | in progress | agent + utente | [handoff](../agent/handoff.md) | `uv run pytest` |
 
 ## Planned Work
 
 | Priority | Work item | Why it matters | Start files | Done when |
 | --- | --- | --- | --- | --- |
-| P1 | Verifiche V1–V4 su un save reale di FM26 | fissano cosa la Fase 1 può mostrare e la strategia di cache | [requisiti](requirements.md), [fmsave](../reference/fmsave.md) | risposte registrate in `reference/fmsave.md` |
-| P1 | Primo sottoprogetto (SP1): spec → piano → implementazione | inizio della Fase 1 | spec madre (da scrivere) | definito nella spec madre |
+| P1 | SP2 motore di ricerca | filtri su CA/PA/hidden (Fase 1) | spec madre §7 | spec e piano approvati |
 
 ## Recently Completed
 
 | Date | Work item | Verification | Evidence |
 | --- | --- | --- | --- |
+| 2026-11-03 | SP1 Task 1–8: scheletro, catalogo campi, snapshot, ImportSave, Parquet, SQLite, adattatore fmsave, CLI | `uv run pytest` → 55 passed | commit `568c2d7..2025c37` |
+| 2026-11-03 | Spec madre, spec e piano SP1 | approvati dall'utente | `docs/superpowers/` |
 | 2026-10-31 | Ricerca di contesto online (fmsave, tool esistenti, FM-Arena, FM27) | Not verified - ricerca documentale | [fmsave](../reference/fmsave.md), [prior art](../reference/prior-art.md) |
 | 2026-10-31 | Inizializzazione della wiki | file presenti in `wiki/` | [log](../log.md) |
 
@@ -35,4 +36,5 @@ confidence: medium
 
 | Work item | Blocker | Needed from | Next check |
 | --- | --- | --- | --- |
-| Verifiche V1–V4 | serve un file di salvataggio FM26 (meglio grande) | utente | quando l'utente lo fornisce |
+| V1, V4 | rimandate dall'utente (2026-11-03): confronto con il gioco e con un tool esterno dopo l'uscita ufficiale di FM27 | utente | dopo il 2026-11-10 |
+| V5, V7 | nuovo `Roma.fm` dopo una sessione; spostate in SP4 (storico e newgen) | utente | inizio SP4 |

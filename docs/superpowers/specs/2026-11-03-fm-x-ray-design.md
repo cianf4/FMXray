@@ -6,12 +6,12 @@
 
 Gli scouting tool per Football Manager che mostrano i dati nascosti (Genie Scout, FMSuperScout, FM26-Analyst) sono closed source o solo Windows, e leggono la memoria del gioco legandosi a build precise. La web app di fmsave legge i save ma non tiene storico, non ha pesi modificabili né proiezioni. L'utente vuole **un tool suo**, senza dipendere da quelli esterni.
 
-**Obiettivo:** un'app desktop per Linux e Windows, da tenere sul secondo schermo mentre FM gira sul primo. Legge i save di FM26 (poi FM27) e mostra tutto il database dei giocatori con più dati possibili, compresi CA, PA e hidden. Si aggiorna da sola quando il gioco salva e tiene uno storico tra i save.
+**Obiettivo:** un'app desktop per Linux e Windows, da tenere sul secondo schermo mentre FM gira sul primo. Legge i save di FM27 (e FM26 nei limiti di fmsave) e mostra tutto il database dei giocatori con più dati possibili, compresi CA, PA e hidden. Si aggiorna da sola quando il gioco salva e tiene uno storico tra i save.
 
 **Cosa ha deciso l'utente durante il brainstorming:**
 - fonte dati fmsave con versione bloccata, dietro un solo adattatore; niente parser del save scritto da noi;
 - lettura dalla RAM solo alla fine, come seconda fonte, per Windows e Linux via Proton;
-- FM26 prima di FM27;
+- ~~FM26 prima di FM27~~ → **FM27 obiettivo principale** (aggiornato il 2026-11-03: l'utente gioca solo a FM27);
 - app desktop PySide6 + Qt Widgets, niente "aspetto da sito";
 - logica separata dalla UI;
 - tutte le raccomandazioni della sessione del 2026-11-03: storico sfoltito, Parquet + Polars + SQLite, pesi in TOML, test su tre livelli, uv/Ruff/mypy, architettura esagonale, ordine dei sottoprogetti.
@@ -49,7 +49,7 @@ Contesto esterno raccolto: [wiki/reference/fmsave.md](../../../wiki/reference/fm
 - **Lettura sicura:** si legge sempre una **copia** del save (fmsave lo raccomanda col gioco aperto).
 - **Stato dei campi:** per ogni campo usato l'adattatore registra lo stato `verified`/`unconfirmed` (`fmsave.field_status`) nel catalogo dei campi (sezione 4).
 - **Contributi a fmsave** solo come issue, con prova verificata nel gioco, senza allegare save.
-- **FM27:** accettato solo nelle build che fmsave apre; tutti i suoi campi trattati come non confermati.
+- **FM27 è l'obiettivo principale.** Build di riferimento: quella del save dell'utente, `27.0.0+2493426` (non registrata in fmsave 0.9.3, che usa i layout della `2486695`). Tutti i campi FM27 sono `unconfirmed` finché non li verifichiamo nel gioco. FM26 resta supportato nei limiti di fmsave.
 
 **Verifiche da fare in SP1 su un save reale** (decidono dettagli di SP1 e SP2):
 
@@ -164,7 +164,7 @@ flowchart TB
 ## 9. Fase 2 (dettagli nelle spec di SP4–SP7)
 
 - **Storico e newgen:** crescita della CA, progress rate, watchlist con grafici. Newgen = persona assente nel primo snapshot della carriera; opzionalmente un save del giorno 1 dello stesso database come base.
-- **Rating per ruolo:** media pesata normalizzata, **pesi tutti visibili**, profili in **TOML** (letti con `tomllib`, scritti dall'editor con `tomlkit` per non perdere i commenti). Valori di partenza derivati dai test di FM-Arena e dai pesi della CA dell'editor ufficiale di FM26. Valutare l'import dei `.grf` di Genie Scout.
+- **Rating per ruolo:** media pesata normalizzata, **pesi tutti visibili**, profili in **TOML** (letti con `tomllib`, scritti dall'editor con `tomlkit` per non perdere i commenti). Valori di partenza derivati dai test di FM-Arena e dai pesi della CA dell'editor ufficiale di FM27. Valutare l'import dei `.grf` di Genie Scout.
 - **Proiezioni:** scalare gli attributi verso la PA preservando il profilo, correggere per età e tipo, limite 20; marcate `estimate`; **verificate a posteriori** confrontandole con gli snapshot successivi.
 - **Asking price:** stima marcata `estimate`, opzionale.
 
@@ -205,7 +205,7 @@ Confronto fino a 3 giocatori; vista della propria rosa con i buchi per ruolo; ex
 
 ## Da verificare nella spec di ciascun sottoprogetto (documentazione, niente API indovinate)
 
-Versioni correnti di fmsave, PySide6, Polars; supporto Python 3.13; API `field_status` e valori di `ClauseKind`; strumento per le regole di import; posizione standard della cartella dati; comportamento di `QFileSystemWatcher` su Windows e Linux con file scritti a pezzi; formato `.grf`; BepInEx 6 sotto Proton per FM26.
+Versioni correnti di fmsave, PySide6, Polars; supporto Python 3.13; API `field_status` e valori di `ClauseKind`; strumento per le regole di import; posizione standard della cartella dati; comportamento di `QFileSystemWatcher` su Windows e Linux con file scritti a pezzi; formato `.grf`; BepInEx 6 sotto Proton per FM27.
 
 ---
 

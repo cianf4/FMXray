@@ -1,12 +1,19 @@
 ---
 title: Moduli
-updated: 2026-10-31
-sources: []
-source_commit: unknown
-confidence: low
+updated: 2026-11-03
+sources:
+  - src/fmxray
+source_commit: 2025c37
+confidence: high
 ---
 
 # Moduli
 
-Nessun modulo ancora: il repository non contiene codice. Una pagina per area di
-codice verrà aggiunta da SP1 in poi.
+| Modulo | Pagina |
+| --- | --- |
+| `fmxray.domain` | [domain](domain.md) |
+| `fmxray.application` | [application](application.md) |
+| `fmxray.adapters.fmsave_source` | [fmsave-source](fmsave-source.md) |
+| `fmxray.adapters.parquet_store` | [parquet-store](parquet-store.md) |
+| `fmxray.adapters.sqlite_catalog` | [sqlite-catalog](sqlite-catalog.md) |
+| `fmxray.cli`, `fmxray.bootstrap` | [cli](cli.md) |

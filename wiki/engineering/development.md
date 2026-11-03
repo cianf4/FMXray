@@ -1,14 +1,25 @@
 ---
 title: Sviluppo
-updated: 2026-10-31
-sources: []
-source_commit: unknown
-confidence: low
+updated: 2026-11-03
+sources:
+  - pyproject.toml
+  - .python-version
+  - uv.lock
+source_commit: 2025c37
+confidence: high
 ---
 
 # Sviluppo
 
-Nessun contenuto verificato: il repository non contiene ancora codice. La pagina
-si popola con il primo sottoprogetto (SP1).
+| Cosa | Comando (dalla radice del repo) |
+| --- | --- |
+| Installare / aggiornare l'ambiente (lo lancia l'utente) | `uv sync` |
+| Test | `uv run pytest` |
+| Lint | `uv run ruff check` |
+| Formattazione | `uv run ruff format` (controllo: `uv run ruff format --check`) |
+| Tipi | `uv run mypy src tests` |
+| Regole di import | `uv run lint-imports` |
+| Usare il tool | `uv run fmxray --help` |
 
-Vincoli già noti: Python 3.12+ (richiesto da fmsave); ambiente Python gestito con `uv`; i comandi di installazione e i commit li lancia l'utente. Vedi [decisioni](../project/decisions.md).
+- Python 3.14 (`.python-version`), dipendenze bloccate in `uv.lock`; fmsave è fissato a `==0.9.3`.
+- Branch di lavoro per sottoprogetto (SP1: `sp1-fondamenta`); commit e push li fa l'utente.

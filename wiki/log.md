@@ -23,3 +23,10 @@ confidence: high
 
 ## [2026-11-03] sync | spec madre
 - Decisioni D12–D20 aggiunte; handoff e stato aggiornati alla spec madre `docs/superpowers/specs/2026-11-03-fm-x-ray-design.md`
+- [2026-11-03] sync | reference/fmsave.md: verifiche su Roma.fm (FM27, fmsave 0.9.3)
+- [2026-11-03] sync | D7 → FM27 obiettivo principale; spec SP1 scritta
+
+## [2026-11-03] ingest | SP1 Fondamenta
+- Moduli: domain, application, fmsave-source, parquet-store, sqlite-catalog, cli
+- Engineering popolate: architecture, data-model, development, testing, change-map
+- Verifiche: V2, V3, V6 registrate; V1, V4, V5, V7 in attesa

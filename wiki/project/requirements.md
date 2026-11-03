@@ -37,6 +37,8 @@ non li fissa.
 | V3 | Tempi di lettura su un save grande | non documentati: decide la strategia di cache |
 | V4 | Conversione dell'unità monetaria interna nella valuta mostrata | da calibrare confrontando con i valori nel gioco |
 
+Stato al 2026-11-03: V2, V3, V6 fatte (vedi [fmsave](../reference/fmsave.md)); V1 e V4 rimandate dall'utente a dopo l'uscita di FM27, con confronto anche verso un tool esterno; V5 e V7 spostate in SP4.
+
 ## Non funzionali
 
 | ID | Requisito | Fonte |

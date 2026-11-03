@@ -1,0 +1,89 @@
+[project]
+name = "fmxray"
+version = "0.1.0"
+description = "Personal, read-only scouting tool for Football Manager save files"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.14"
+dependencies = [
+    "fmsave==0.9.3",
+    "polars>=2.1,<3",
+    "platformdirs>=4.14",
+]
+
+[project.scripts]
+fmxray = "fmxray.bootstrap:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2",
+    "hypothesis>=6.170",
+    "mypy>=2.4",
+    "ruff>=0.17",
+    "import-linter>=2.15",
+]
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+strict = true
+python_version = "3.14"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = ["real_save: needs a real FM save, skipped when absent"]
+
+[tool.importlinter]
+root_package = "fmxray"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "domain depends on nothing else in fmxray"
+type = "forbidden"
+source_modules = ["fmxray.domain"]
+forbidden_modules = ["fmxray.application", "fmxray.adapters", "fmxray.cli", "fmxray.bootstrap"]
+
+[[tool.importlinter.contracts]]
+name = "application depends only on domain"
+type = "forbidden"
+source_modules = ["fmxray.application"]
+forbidden_modules = ["fmxray.adapters", "fmxray.cli", "fmxray.bootstrap"]
+
+[[tool.importlinter.contracts]]
+name = "cli does not know adapters or bootstrap"
+type = "forbidden"
+source_modules = ["fmxray.cli"]
+forbidden_modules = ["fmxray.adapters", "fmxray.bootstrap"]
+
+[[tool.importlinter.contracts]]
+name = "only the fmsave adapter imports fmsave"
+type = "forbidden"
+source_modules = [
+    "fmxray.domain",
+    "fmxray.application",
+    "fmxray.cli",
+    "fmxray.adapters.parquet_store",
+    "fmxray.adapters.sqlite_catalog",
+]
+forbidden_modules = ["fmsave"]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
+name = "adapters are independent"
+type = "independence"
+modules = [
+    "fmxray.adapters.fmsave_source",
+    "fmxray.adapters.parquet_store",
+    "fmxray.adapters.sqlite_catalog",
+]

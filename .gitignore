@@ -28,3 +28,7 @@ htmlcov/
 *.swp
 .DS_Store
 Thumbs.db
+
+# superpowers execution workspace
+/.superpowers/
+.hypothesis/

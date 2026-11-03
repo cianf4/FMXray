@@ -26,3 +26,11 @@ Log append-only.
 - **Trigger:** l'utente approva in blocco le raccomandazioni ("vai").
 - **Actions:** scritta la spec madre; rilettura inline al posto del builder check con sotto-agente; decisioni D12–D20 in wiki.
 - **Follow-up:** revisione utente; lingua UI e repo da confermare; poi SP1.
+
+## 2026-11-03 - Claude Code (Opus 5.5) - esecuzione SP1
+
+- **Trigger:** piano SP1 approvato.
+- **Actions:** Task 1–8 con TDD inline (executing-plans); import del save reale; wiki dei moduli.
+- **Validation:** `uv run pytest` → 55 passed (incluso il save reale); ruff, mypy, lint-imports puliti.
+- **Decisions:** rulings nel ledger di esecuzione (record incompleti di fmsave, `App` in `cli`, dati dei giocatori solo in `local/`).
+- **Follow-up:** V1/V4 (confronto nel gioco), V5/V7 (nuovo save), revisione finale, merge, SP2.

@@ -13,20 +13,19 @@ confidence: medium
 
 ## Current Work State
 
-- Status: in progress
-- Goal: far approvare la spec madre e partire con SP1
-- Last completed step: spec madre scritta (2026-11-03), decisioni D1–D20
-- Current branch: `unknown` (la cartella non è un repo git)
-- Last commit: `unknown`
-- Worktree: unknown
+- Status: in progress (SP1 quasi chiuso)
+- Goal: merge di SP1 e partire con SP2 (V1/V4 rimandate dall'utente all'uscita di FM27; V5/V7 in SP4)
+- Last completed step: Task 1–8 del piano SP1 committati (`568c2d7..2025c37`), suite 55 test verde; import reale di `Roma.fm` fatto
+- Current branch: `sp1-fondamenta`
+- Last commit: `2025c37`
+- Worktree: dirty solo per la wiki (Task 9)
 
 ## Baton For Next Coding Agent
 
 | Order | Task | Start files | Done when | Verification command | Notes / blockers |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Revisione della spec madre da parte dell'utente | `docs/superpowers/specs/2026-11-03-fm-x-ray-design.md` | l'utente approva (o le modifiche sono applicate) | Not verified - documento | lingua UI (inglese) e repo (pubblico, MIT) decisi: D21, D22 |
-| 2 | Spec di SP1 (Fondamenta) → `superpowers:writing-plans` | spec madre §12 | spec e piano SP1 approvati | Not verified - documento | |
-| 3 | Verifiche V1–V4 su un save reale | `wiki/reference/fmsave.md`, `wiki/project/requirements.md` | risposte registrate in `reference/fmsave.md` | `uvx fmsave info <save>.fm` (la lancia l'utente) | serve il save dall'utente |
+| 1 | Merge di SP1 in `main` dopo CI verde, merge in `main` (lo fa l'utente) | `docs/superpowers/plans/2026-11-03-sp1-fondamenta.md` | CI verde su Linux e Windows | `uv run pytest` | |
+| 2 | SP2: spec del motore di ricerca | spec madre §7, §12 | spec approvata | Not verified - documento | |
 
 ## Blockers
 
