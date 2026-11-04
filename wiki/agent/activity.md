@@ -40,3 +40,11 @@ Log append-only.
 - **Actions:** fix CI (setup-uv v10.3.3), fix errori fmsave non tradotti, PR #1 creata con `gh`, unita dall'utente.
 - **Validation:** CI verde su ubuntu-latest e windows-latest.
 - **Follow-up:** SP2.
+
+## 2026-11-04 - Claude Code (Opus 5.5) - esecuzione SP2
+
+- **Trigger:** piano SP2 approvato ("vai, procedi").
+- **Actions:** Task 1–8 con TDD inline; verifica sul save reale (`search "age<22 pa>180"`, `search "finishng>15"` → suggerisce `finishing`).
+- **Validation:** `uv run pytest` → 117 passed (save reale incluso); ruff, mypy, lint-imports puliti; ricerca sul save reale 2–8 ms.
+- **Decisions:** rulings nel ledger (posizione in `UnknownFieldError`, controllo dei tipi nel parser, `find_snapshot`, alias anche in `--columns`, commit raggruppati).
+- **Follow-up:** commit e push dall'utente, CI, PR; V5 decide se `uid` basta per i "nuovi risultati".

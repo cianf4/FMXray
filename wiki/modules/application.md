@@ -1,6 +1,6 @@
 ---
 title: Modulo application
-updated: 2026-11-03
+updated: 2026-11-04
 sources:
   - src/fmxray/application/ports.py
   - src/fmxray/application/import_save.py
@@ -23,7 +23,10 @@ Casi d'uso e porte (`typing.Protocol`). Dipende solo da `domain` (contratto 2).
 | `SaveSource`, `SnapshotStore`, `CatalogStore` | porte implementate dagli adattatori |
 | `ImportSave.execute(save_path, career_name) -> ImportResult` | importa un save (`IMPORTED` / `ALREADY_IMPORTED`) |
 | `ShowPlayer.find(...)`, `ShowPlayer.details(...)` | ricerca per nome senza maiuscole e accenti; tutti i campi di un giocatore |
-| `FmxrayError` e sottoclassi | errori mostrati all'utente |
+| `SearchPlayers`, `SaveSearch`, `RunSavedSearch`, `export_csv` | ricerca, ricerche salvate, CSV: vedi [search](search.md) |
+| `SavedSearch`, `SavedSearchStore` | ricerca salvata (testo + albero) e la sua porta |
+| `load_snapshot`, `find_snapshot`, `previous_snapshot` | caricamento degli snapshot comune ai casi d'uso |
+| `FmxrayError` e sottoclassi | errori mostrati all'utente (anche `SavedSearchExistsError`, `SavedSearchNotFoundError`) |
 
 ## Data/control flow
 ```mermaid

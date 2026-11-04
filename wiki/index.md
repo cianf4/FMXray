@@ -37,7 +37,8 @@ confidence: high
 | --- | --- |
 | [Moduli](modules/README.md) | indice |
 | [domain](modules/domain.md) | catalogo campi, snapshot |
-| [application](modules/application.md) | porte, ImportSave, ShowPlayer |
+| [search](modules/search.md) | filtri, barra a testo, ricerche salvate |
+| [application](modules/application.md) | porte, ImportSave, ShowPlayer, SearchPlayers |
 | [fmsave-source](modules/fmsave-source.md) | unico punto che legge fmsave |
 | [parquet-store](modules/parquet-store.md) | snapshot su Parquet |
 | [sqlite-catalog](modules/sqlite-catalog.md) | catalogo su SQLite |
