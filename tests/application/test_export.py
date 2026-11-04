@@ -41,3 +41,15 @@ def test_unknown_column_raises(tmp_path: Path) -> None:
     with pytest.raises(UnknownFieldError) as error:
         export_csv(_frame(), tmp_path / "out.csv", columns=["nmae"])
     assert "name" in error.value.suggestions
+
+
+def test_text_that_looks_like_a_formula_is_neutralised(tmp_path: Path) -> None:
+    frame = make_player_frame(
+        3, name=["=HYPERLINK(1)", "+1", "Mile Svilar"], traits=[["@x"], [], []]
+    )
+    path = tmp_path / "out.csv"
+    export_csv(frame, path, columns=["name", "traits", "age"])
+    back = pl.read_csv(path)
+    assert back["name"].to_list() == ["'=HYPERLINK(1)", "'+1", "Mile Svilar"]
+    assert back["traits"][0] == "'@x"
+    assert back["age"].dtype.is_numeric()

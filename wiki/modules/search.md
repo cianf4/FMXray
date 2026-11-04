@@ -55,7 +55,7 @@ term     := NAME OP VALUE | NAME ":" VALUE  # OP: < <= > >= = !=
 ## Casi d'uso collegati (application)
 - `SearchPlayers.execute(career, spec, sort, limit, snapshot_id)` → `SearchResult(meta, frame, total, money_fields)`; valori mancanti in fondo all'ordinamento; cache di un solo frame preparato.
 - `SaveSearch`, `RunSavedSearch` → `SavedSearchRun(search, result, new_uids)`: nuovi = `uid` che soddisfano la ricerca nell'ultimo snapshot e non nel precedente (V5: se `uid` non fosse stabile, si cambia solo in `RunSavedSearch`).
-- `export_csv(frame, path, columns)`: UTF-8 con BOM, liste unite con `|`, colonne `__folded` escluse.
+- `export_csv(frame, path, columns)`: UTF-8 con BOM, liste unite con `|`, colonne `__folded` escluse; i testi che iniziano con `=`, `+`, `-`, `@`, tab o a capo prendono un `'` davanti, così Excel e LibreOffice non li eseguono come formule.
 
 ## Verification
 `uv run pytest tests/domain/search tests/application/test_search.py tests/application/test_saved_search.py tests/application/test_export.py`; prestazioni: `tests/application/test_search_performance.py` (< 200 ms su 126.427 righe; sul save reale 2–8 ms).
