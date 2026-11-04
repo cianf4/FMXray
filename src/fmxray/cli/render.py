@@ -3,6 +3,8 @@
 from collections.abc import Mapping, Sequence
 
 from fmxray.application.import_save import ImportResult, ImportStatus
+from fmxray.application.ports import SavedSearch
+from fmxray.application.search import SearchResult
 from fmxray.application.show_player import PlayerMatch
 from fmxray.domain.fields import PLAYER_CATALOG, FieldGroup
 from fmxray.domain.snapshot import SnapshotMeta
@@ -47,3 +49,36 @@ def player_details(meta: SnapshotMeta, values: Mapping[str, object]) -> str:
             provenance = meta.provenance.get(spec.name, "-")
             lines.append(f"  {spec.name:30} {values.get(spec.name)!s:30} [{provenance}]")
     return "\n".join(lines)
+
+
+def _cell(value: object) -> str:
+    if value is None:
+        return "-"
+    if isinstance(value, list):
+        return ",".join(str(v) for v in value)
+    return str(value)
+
+
+def search_results(
+    result: SearchResult, columns: Sequence[str], new_uids: frozenset[int] | None = None
+) -> str:
+    """A table of the results; with `new_uids`, new players are marked with `*`."""
+    rows = [[_cell(v) for v in row] for row in result.frame.select(columns).iter_rows()]
+    widths = [max([len(c), *(len(row[i]) for row in rows)]) for i, c in enumerate(columns)]
+    uids = result.frame["uid"].to_list()
+    prefix = "" if new_uids is None else "  "
+    lines = [prefix + "  ".join(c.ljust(w) for c, w in zip(columns, widths, strict=True))]
+    for uid, row in zip(uids, rows, strict=True):
+        mark = "" if new_uids is None else ("* " if uid in new_uids else "  ")
+        lines.append(mark + "  ".join(v.ljust(w) for v, w in zip(row, widths, strict=True)))
+    footer = f"{result.frame.height} of {result.total} players"
+    if new_uids is not None:
+        footer += f" ({len(new_uids)} new)"
+    return "\n".join([*(line.rstrip() for line in lines), footer])
+
+
+def saved_searches(searches: Sequence[SavedSearch]) -> str:
+    if not searches:
+        return "no saved searches"
+    width = max(len(s.name) for s in searches)
+    return "\n".join(f"{s.name.ljust(width)}  {s.query_text}" for s in searches)

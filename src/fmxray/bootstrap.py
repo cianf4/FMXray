@@ -10,9 +10,11 @@ import platformdirs
 
 from fmxray.adapters.fmsave_source import FmsaveSaveSource
 from fmxray.adapters.parquet_store import ParquetSnapshotStore
-from fmxray.adapters.sqlite_catalog import SqliteCatalogStore
+from fmxray.adapters.sqlite_catalog import SqliteCatalogStore, SqliteSavedSearchStore
 from fmxray.application.import_save import ImportSave
 from fmxray.application.ports import SaveSource
+from fmxray.application.saved_search import RunSavedSearch, SaveSearch
+from fmxray.application.search import SearchPlayers
 from fmxray.application.show_player import ShowPlayer
 from fmxray.cli.commands import App, run
 
@@ -27,15 +29,26 @@ def resolve_data_dir(cli_value: str | None, env: Mapping[str, str]) -> Path:
     return Path(platformdirs.user_data_dir("fmxray"))
 
 
+def _now() -> datetime:
+    return datetime.now(UTC)
+
+
 def build_app(data_dir: Path, source: SaveSource | None = None) -> App:
     workdir = data_dir / "tmp"
     workdir.mkdir(parents=True, exist_ok=True)
     store = ParquetSnapshotStore(data_dir / "snapshots")
     catalog = SqliteCatalogStore(data_dir / "catalog.db")
-    import_save = ImportSave(
-        source or FmsaveSaveSource(), store, catalog, workdir, lambda: datetime.now(UTC)
+    saved_searches = SqliteSavedSearchStore(data_dir / "catalog.db")
+    search_players = SearchPlayers(store, catalog)
+    return App(
+        import_save=ImportSave(source or FmsaveSaveSource(), store, catalog, workdir, _now),
+        show_player=ShowPlayer(store, catalog),
+        catalog=catalog,
+        search_players=search_players,
+        save_search=SaveSearch(saved_searches, _now),
+        run_saved_search=RunSavedSearch(saved_searches, search_players, catalog),
+        saved_searches=saved_searches,
     )
-    return App(import_save=import_save, show_player=ShowPlayer(store, catalog), catalog=catalog)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
