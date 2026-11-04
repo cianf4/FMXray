@@ -15,3 +15,11 @@ class UnsupportedSaveError(FmxrayError):
 
 class CareerNotFoundError(FmxrayError):
     """No career with the given name exists."""
+
+
+class SavedSearchExistsError(FmxrayError):
+    """A saved search with that name already exists."""
+
+
+class SavedSearchNotFoundError(FmxrayError):
+    """No saved search with the given name exists."""
