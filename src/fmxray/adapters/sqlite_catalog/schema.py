@@ -27,6 +27,14 @@ MIGRATIONS: tuple[str, ...] = (
         UNIQUE (career_id, source_sha256)
     );
     """,
+    """
+    CREATE TABLE saved_searches (
+        name TEXT PRIMARY KEY,
+        query_text TEXT NOT NULL,
+        spec_json TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    );
+    """,
 )
 
 
