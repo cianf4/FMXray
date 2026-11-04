@@ -2,13 +2,14 @@
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Protocol
 
 import polars as pl
 
 from fmxray.domain.fields import Provenance
+from fmxray.domain.search.spec import Spec
 from fmxray.domain.snapshot import Snapshot, SnapshotMeta
 
 
@@ -49,3 +50,21 @@ class CatalogStore(Protocol):
     def list_snapshots(self, career_id: int | None = None) -> list[SnapshotMeta]: ...
 
     def latest_snapshot(self, career_id: int) -> SnapshotMeta | None: ...
+
+
+@dataclass(frozen=True)
+class SavedSearch:
+    name: str
+    query_text: str  # what the user typed, for display
+    spec: Spec  # what runs: stays valid if the text syntax changes
+    created_at: datetime
+
+
+class SavedSearchStore(Protocol):
+    def save(self, search: SavedSearch, replace: bool = False) -> None: ...
+
+    def get(self, name: str) -> SavedSearch | None: ...
+
+    def list(self) -> list[SavedSearch]: ...
+
+    def delete(self, name: str) -> bool: ...

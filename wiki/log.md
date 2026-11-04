@@ -33,3 +33,7 @@ confidence: high
 
 ## [2026-11-04] sync | chiusura SP1
 - PR #1 unita in `main` (merge `95075b9`); D16 aggiornata a Python 3.14; stato, work tracker e handoff puntano a SP2
+
+## [2026-11-04] ingest | SP2 Motore di ricerca
+- Nuova pagina: modules/search.md (grammatica, semantica, invarianti)
+- Aggiornate: modules/README, application, cli, sqlite-catalog; engineering/change-map; project/status, work-tracker; agent/handoff, activity; index

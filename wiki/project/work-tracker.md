@@ -1,6 +1,6 @@
 ---
 title: Work Tracker
-updated: 2026-10-31
+updated: 2026-11-04
 sources:
   - wiki/agent/activity.md
   - wiki/agent/handoff.md
@@ -15,7 +15,7 @@ confidence: medium
 
 | Priority | Work item | Status | Owner | Evidence | Next verification |
 | --- | --- | --- | --- | --- | --- |
-| P0 | SP2 motore di ricerca: brainstorming e spec | in progress | agent + utente | [handoff](../agent/handoff.md) | Not verified - documento |
+| P0 | SP2 motore di ricerca: commit, CI, PR | in progress | utente (commit/push) + agent (PR) | branch `sp2-ricerca` | CI verde su Linux e Windows |
 
 ## Planned Work
 
@@ -27,6 +27,7 @@ confidence: medium
 
 | Date | Work item | Verification | Evidence |
 | --- | --- | --- | --- |
+| 2026-11-04 | SP2 Task 1–8: albero dei filtri, parser, campi calcolati, SearchPlayers, CSV, ricerche salvate (SQLite v2), comandi `search`/`searches` | `uv run pytest` → 117 passed (save reale incluso); ruff, mypy, lint-imports puliti | [search](../modules/search.md) |
 | 2026-11-03 | SP1 unito in `main` (PR #1) | CI verde Linux + Windows, 56 test | merge `95075b9` |
 | 2026-11-03 | SP1 Task 1–8: scheletro, catalogo campi, snapshot, ImportSave, Parquet, SQLite, adattatore fmsave, CLI | `uv run pytest` → 55 passed | commit `568c2d7..2025c37` |
 | 2026-11-03 | Spec madre, spec e piano SP1 | approvati dall'utente | `docs/superpowers/` |

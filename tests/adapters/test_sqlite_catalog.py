@@ -75,8 +75,8 @@ def test_data_survives_reopen(tmp_path: Path) -> None:
         assert catalog.list_snapshots() == [meta]
 
 
-def test_user_version_is_1(tmp_path: Path) -> None:
+def test_user_version_is_2(tmp_path: Path) -> None:
     db = tmp_path / "catalog.db"
     SqliteCatalogStore(db).close()
     with sqlite3.connect(db) as conn:
-        assert conn.execute("PRAGMA user_version").fetchone()[0] == 1
+        assert conn.execute("PRAGMA user_version").fetchone()[0] == 2

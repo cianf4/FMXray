@@ -5,7 +5,8 @@ from pathlib import Path
 
 import polars as pl
 
-from fmxray.application.ports import SaveReading
+from fmxray.application.errors import SavedSearchExistsError
+from fmxray.application.ports import SavedSearch, SaveReading
 from fmxray.domain.fields import PLAYER_CATALOG, Provenance
 from fmxray.domain.snapshot import Snapshot, SnapshotMeta
 from tests.factories import make_player_frame
@@ -81,3 +82,22 @@ class InMemoryCatalogStore:
     def latest_snapshot(self, career_id: int) -> SnapshotMeta | None:
         found = self.list_snapshots(career_id)
         return found[-1] if found else None
+
+
+class InMemorySavedSearchStore:
+    def __init__(self) -> None:
+        self.searches: dict[str, SavedSearch] = {}
+
+    def save(self, search: SavedSearch, replace: bool = False) -> None:
+        if search.name in self.searches and not replace:
+            raise SavedSearchExistsError(search.name)
+        self.searches[search.name] = search
+
+    def get(self, name: str) -> SavedSearch | None:
+        return self.searches.get(name)
+
+    def list(self) -> list[SavedSearch]:
+        return [self.searches[name] for name in sorted(self.searches)]
+
+    def delete(self, name: str) -> bool:
+        return self.searches.pop(name, None) is not None
