@@ -31,7 +31,7 @@ Prese dall'utente durante il brainstorming (2026-10-31 → 2026-11-03). Dettagli
 | D13 | Storage: **Parquet** per snapshot + **Polars** per le query + **SQLite** per lo stato dell'utente; DuckDB e delta solo se servono | snapshot immutabili = file; filtri in ms su 600k righe | spec madre §5 |
 | D14 | Pesi dei ruoli in **TOML** (`tomllib` in lettura, `tomlkit` dall'editor), pesi tutti visibili | editabile a mano, commenti, stdlib | spec madre §9 |
 | D15 | Test su tre livelli: factory sintetiche, adattatore con oggetti finti, integrazione su save in `local/` saltata se assente | niente dati di gioco nel repo | spec madre §11 |
-| D16 | uv, Python 3.13 (fallback 3.12), Ruff, mypy strict, pytest, pytest-qt, Hypothesis; CI GitHub Actions Linux + Windows | qualità e due sistemi operativi | spec madre §11 |
+| D16 | uv, **Python 3.14** (deciso in SP1: tutte le dipendenze la supportano), Ruff, mypy strict, pytest, pytest-qt, Hypothesis; CI GitHub Actions Linux + Windows | qualità e due sistemi operativi | spec madre §11 |
 | D17 | Architettura esagonale (domain, application, adapters, ui, cli, bootstrap) con regole di import verificate in CI; Strategy, Repository, Specification, Observer | sostituibilità di fonti, storage e UI | spec madre §3 |
 | D18 | Newgen: confronto con il primo snapshot della carriera, più save del giorno 1 opzionale | nessun flag diretto nel save | spec madre §9 |
 | D19 | Distribuzione: `uv run` fino a SP8, poi PyInstaller | uso personale | spec madre §11 |

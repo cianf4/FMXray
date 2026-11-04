@@ -13,25 +13,24 @@ confidence: medium
 
 ## Current Work State
 
-- Status: in progress (SP1 quasi chiuso)
-- Goal: merge di SP1 e partire con SP2 (V1/V4 rimandate dall'utente all'uscita di FM27; V5/V7 in SP4)
-- Last completed step: Task 1–8 del piano SP1 committati (`568c2d7..2025c37`), suite 55 test verde; import reale di `Roma.fm` fatto
-- Current branch: `sp1-fondamenta`
-- Last commit: `2025c37`
-- Worktree: dirty solo per la wiki (Task 9)
+- Status: SP1 chiuso; SP2 non iniziato
+- Goal: SP2 (motore di ricerca): brainstorming → spec → piano
+- Last completed step: PR #1 unita in `main` (merge `95075b9`), CI verde
+- Current branch: `main` (dopo `git switch main`)
+- Last commit: `95075b9`
+- Worktree: dirty solo per la wiki (chiusura SP1)
 
 ## Baton For Next Coding Agent
 
 | Order | Task | Start files | Done when | Verification command | Notes / blockers |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Merge di SP1 in `main` dopo CI verde, merge in `main` (lo fa l'utente) | `docs/superpowers/plans/2026-11-03-sp1-fondamenta.md` | CI verde su Linux e Windows | `uv run pytest` | |
-| 2 | SP2: spec del motore di ricerca | spec madre §7, §12 | spec approvata | Not verified - documento | |
+| 1 | SP2: brainstorming e spec del motore di ricerca (filtri Specification → Polars, ricerche salvate, barra a testo, CSV) | spec madre §7, §12; `src/fmxray/application/` | spec SP2 approvata | Not verified - documento | prima skill: `superpowers:brainstorming` |
 
 ## Blockers
 
 | Blocker | Type | Needed from | Current workaround |
 | --- | --- | --- | --- |
-| Nessun save reale disponibile | external | utente | proseguire con brainstorming e spec |
+| Nuovo `Roma.fm` per V5/V7 | external | utente | non blocca SP2 |
 
 ## Known Risks
 

@@ -30,3 +30,6 @@ confidence: high
 - Moduli: domain, application, fmsave-source, parquet-store, sqlite-catalog, cli
 - Engineering popolate: architecture, data-model, development, testing, change-map
 - Verifiche: V2, V3, V6 registrate; V1, V4, V5, V7 in attesa
+
+## [2026-11-04] sync | chiusura SP1
+- PR #1 unita in `main` (merge `95075b9`); D16 aggiornata a Python 3.14; stato, work tracker e handoff puntano a SP2

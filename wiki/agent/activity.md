@@ -34,3 +34,9 @@ Log append-only.
 - **Validation:** `uv run pytest` → 55 passed (incluso il save reale); ruff, mypy, lint-imports puliti.
 - **Decisions:** rulings nel ledger di esecuzione (record incompleti di fmsave, `App` in `cli`, dati dei giocatori solo in `local/`).
 - **Follow-up:** V1/V4 (confronto nel gioco), V5/V7 (nuovo save), revisione finale, merge, SP2.
+
+## 2026-11-04 - Claude Code (Opus 5.5) - chiusura SP1
+
+- **Actions:** fix CI (setup-uv v10.3.3), fix errori fmsave non tradotti, PR #1 creata con `gh`, unita dall'utente.
+- **Validation:** CI verde su ubuntu-latest e windows-latest.
+- **Follow-up:** SP2.
