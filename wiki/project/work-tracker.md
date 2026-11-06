@@ -1,6 +1,6 @@
 ---
 title: Work Tracker
-updated: 2026-11-04
+updated: 2026-11-06
 sources:
   - wiki/agent/activity.md
   - wiki/agent/handoff.md
@@ -15,18 +15,20 @@ confidence: medium
 
 | Priority | Work item | Status | Owner | Evidence | Next verification |
 | --- | --- | --- | --- | --- | --- |
-| P0 | SP2 motore di ricerca: commit, CI, PR | in progress | utente (commit/push) + agent (PR) | branch `sp2-ricerca` | CI verde su Linux e Windows |
+| P0 | SP3 interfaccia della Fase 1: brainstorming → spec → piano | in progress | agent + utente | spec madre §8, [handoff](../agent/handoff.md) | Not verified - documento |
 
 ## Planned Work
 
 | Priority | Work item | Why it matters | Start files | Done when |
 | --- | --- | --- | --- | --- |
-| P1 | SP3 interfaccia della Fase 1 | tabella e scheda giocatore | spec madre §8 | spec e piano approvati |
+| P1 | SP4 storico e newgen | crescita, progress rate, newgen, watchlist | spec madre §9, §12 | spec e piano approvati |
 
 ## Recently Completed
 
 | Date | Work item | Verification | Evidence |
 | --- | --- | --- | --- |
+| 2026-11-04 | Fix export CSV: testi che sembrano formule (`= + - @`) prefissati con `'` (PR #3) | test RED→GREEN, CI verde | merge `9bfc8a1` |
+| 2026-11-04 | SP2 unito in `main` (PR #2) | CI verde Linux + Windows | merge `2c6ff65` |
 | 2026-11-04 | SP2 Task 1–8: albero dei filtri, parser, campi calcolati, SearchPlayers, CSV, ricerche salvate (SQLite v2), comandi `search`/`searches` | `uv run pytest` → 117 passed (save reale incluso); ruff, mypy, lint-imports puliti | [search](../modules/search.md) |
 | 2026-11-03 | SP1 unito in `main` (PR #1) | CI verde Linux + Windows, 56 test | merge `95075b9` |
 | 2026-11-03 | SP1 Task 1–8: scheletro, catalogo campi, snapshot, ImportSave, Parquet, SQLite, adattatore fmsave, CLI | `uv run pytest` → 55 passed | commit `568c2d7..2025c37` |

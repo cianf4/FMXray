@@ -1,6 +1,6 @@
 ---
 title: Sviluppo
-updated: 2026-11-03
+updated: 2026-11-06
 sources:
   - pyproject.toml
   - .python-version
@@ -22,4 +22,5 @@ confidence: high
 | Usare il tool | `uv run fmxray --help` |
 
 - Python 3.14 (`.python-version`), dipendenze bloccate in `uv.lock`; fmsave è fissato a `==0.9.3`.
-- Branch di lavoro per sottoprogetto (SP1: `sp1-fondamenta`); commit e push li fa l'utente.
+- Branch per le PR con prefisso di tipo: `feat/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`, `ci/` (es. `fix/csv-formule`); SP1 e SP2 usavano `sp1-fondamenta`, `sp2-ricerca`. Commit e push li fa l'utente.
+- Gli stessi comandi valgono su Windows (PowerShell) e Linux; la CI li esegue su entrambi.

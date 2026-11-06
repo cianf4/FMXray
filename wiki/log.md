@@ -37,3 +37,8 @@ confidence: high
 ## [2026-11-04] ingest | SP2 Motore di ricerca
 - Nuova pagina: modules/search.md (grammatica, semantica, invarianti)
 - Aggiornate: modules/README, application, cli, sqlite-catalog; engineering/change-map; project/status, work-tracker; agent/handoff, activity; index
+
+## [2026-11-06] sync | 7 pages updated
+- Changed files: PR #2 e #3 unite in `main` (nessun file sorgente nuovo)
+- Pages updated: project/status, project/work-tracker, agent/handoff, agent/context, engineering/development, overview-fm-x-ray, agent/activity
+- Follow-ups: `CLAUDE.md` alla radice con le regole di lavoro; brainstorming SP3

@@ -48,3 +48,13 @@ Log append-only.
 - **Validation:** `uv run pytest` → 117 passed (save reale incluso); ruff, mypy, lint-imports puliti; ricerca sul save reale 2–8 ms.
 - **Decisions:** rulings nel ledger (posizione in `UnknownFieldError`, controllo dei tipi nel parser, `find_snapshot`, alias anche in `--columns`, commit raggruppati).
 - **Follow-up:** commit e push dall'utente, CI, PR; V5 decide se `uid` basta per i "nuovi risultati".
+
+## 2026-11-06 - Claude Code (Opus 5.5) - wiki portatile
+
+- **Trigger:** l'utente vuole poter continuare dal PC aziendale (Windows).
+- **Intent:** un Claude nuovo deve capire stato, storia e prossimi passi dal solo repo.
+- **Actions:** `wiki-sync` (stato SP2 chiuso, SP3 in brainstorming, sezione "Su un PC nuovo" in context); `CLAUDE.md` con le regole di lavoro imparate nella chat.
+- **Files changed:** pagine elencate nel log del 2026-11-06, `CLAUDE.md`.
+- **Validation:** Not verified - solo documentazione.
+- **Decisions:** le regole di lavoro stanno in `CLAUDE.md` del repo, non solo nella memoria locale di Claude.
+- **Follow-up:** brainstorming SP3.
