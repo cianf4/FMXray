@@ -32,3 +32,6 @@ Thumbs.db
 # superpowers execution workspace
 /.superpowers/
 .hypothesis/
+
+# design-hook config (impeccable plugin), local only
+/.impeccable/
