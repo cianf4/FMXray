@@ -1,6 +1,6 @@
 ---
 title: Architettura
-updated: 2026-11-03
+updated: 2026-11-06
 sources:
   - pyproject.toml
   - src/fmxray/bootstrap.py
@@ -11,11 +11,13 @@ confidence: high
 
 # Architettura
 
-Esagonale (porte e adattatori), un processo Python. Regole di import verificate da `uv run lint-imports` (5 contratti in `pyproject.toml`).
+Esagonale (porte e adattatori), un processo Python. Regole di import verificate da `uv run lint-imports` (7 contratti in `pyproject.toml`).
 
 ```mermaid
 flowchart LR
   cli[cli] --> app[application]
+  ui[ui PySide6] --> app
+  boot --> ui
   boot[bootstrap] --> cli
   boot --> fs[adapters.fmsave_source]
   boot --> pq[adapters.parquet_store]
@@ -31,7 +33,9 @@ flowchart LR
 | --- | --- |
 | 1 | `domain` non importa altri pacchetti del progetto |
 | 2 | `application` importa solo `domain` |
-| 3 | `cli` non importa adattatori né `bootstrap` |
+| 3 | `cli` e `ui` non importano adattatori né `bootstrap` |
+| 3b | `domain` e `application` non importano PySide6 |
+| 3c | `cli` e `ui` sono indipendenti |
 | 4 | solo `adapters.fmsave_source` importa `fmsave` |
 | 5 | gli adattatori sono indipendenti tra loro |
 

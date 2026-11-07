@@ -15,18 +15,20 @@ confidence: medium
 
 | Priority | Work item | Status | Owner | Evidence | Next verification |
 | --- | --- | --- | --- | --- | --- |
-| P0 | SP3 interfaccia della Fase 1: brainstorming → spec → piano | in progress | agent + utente | spec madre §8, [handoff](../agent/handoff.md) | Not verified - documento |
+| P0 | SP3 interfaccia: prova a mano, commit, CI, PR | in progress | utente (prova, commit/push) + agent (PR) | branch `feat/sp3-interfaccia` | CI verde su Linux e Windows (test Qt compresi) |
 
 ## Planned Work
 
 | Priority | Work item | Why it matters | Start files | Done when |
 | --- | --- | --- | --- | --- |
-| P1 | SP4 storico e newgen | crescita, progress rate, newgen, watchlist | spec madre §9, §12 | spec e piano approvati |
+| P1 | SP3b design grafico: tre proposte sui token del tema | aspetto definitivo | `src/fmxray/ui/theme.py`, [ui](../modules/ui.md) | proposta scelta dall'utente |
+| P2 | SP4 storico e newgen | crescita, progress rate, newgen, watchlist | spec madre §9, §12 | spec e piano approvati |
 
 ## Recently Completed
 
 | Date | Work item | Verification | Evidence |
 | --- | --- | --- | --- |
+| 2026-11-06 | SP3 Task 1–10: scheletro PySide6, `to_text`, `FilterState`, viste e cartelle (SQLite v3), tabella, scheda, popup dei filtri, finestra principale, watcher e import in background | `uv run pytest` → 209 passed (save reale incluso); ruff, mypy, lint-imports puliti | [ui](../modules/ui.md) |
 | 2026-11-04 | Fix export CSV: testi che sembrano formule (`= + - @`) prefissati con `'` (PR #3) | test RED→GREEN, CI verde | merge `9bfc8a1` |
 | 2026-11-04 | SP2 unito in `main` (PR #2) | CI verde Linux + Windows | merge `2c6ff65` |
 | 2026-11-04 | SP2 Task 1–8: albero dei filtri, parser, campi calcolati, SearchPlayers, CSV, ricerche salvate (SQLite v2), comandi `search`/`searches` | `uv run pytest` → 117 passed (save reale incluso); ruff, mypy, lint-imports puliti | [search](../modules/search.md) |

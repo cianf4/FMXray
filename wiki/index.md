@@ -43,6 +43,7 @@ confidence: high
 | [parquet-store](modules/parquet-store.md) | snapshot su Parquet |
 | [sqlite-catalog](modules/sqlite-catalog.md) | catalogo su SQLite |
 | [cli](modules/cli.md) | comandi e composition root |
+| [ui](modules/ui.md) | finestra PySide6, filtri, watcher |
 
 ## Project
 
