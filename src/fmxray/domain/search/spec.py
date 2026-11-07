@@ -49,7 +49,7 @@ class TextContains:
 @dataclass(frozen=True)
 class ListContains:
     field: str
-    value: str
+    value: Value
 
 
 @dataclass(frozen=True)
@@ -125,7 +125,7 @@ def _node_from_json(raw: Any) -> Spec:
     if kind == "text_contains":
         return TextContains(str(raw["field"]), str(raw["text"]))
     if kind == "list_contains":
-        return ListContains(str(raw["field"]), str(raw["value"]))
+        return ListContains(str(raw["field"]), _value_from_json(raw["value"]))
     if kind == "and":
         return And(tuple(_node_from_json(x) for x in raw["children"]))
     if kind == "or":
