@@ -75,8 +75,15 @@ def test_data_survives_reopen(tmp_path: Path) -> None:
         assert catalog.list_snapshots() == [meta]
 
 
-def test_user_version_is_2(tmp_path: Path) -> None:
+def test_user_version_is_3(tmp_path: Path) -> None:
     db = tmp_path / "catalog.db"
     SqliteCatalogStore(db).close()
     with sqlite3.connect(db) as conn:
-        assert conn.execute("PRAGMA user_version").fetchone()[0] == 2
+        assert conn.execute("PRAGMA user_version").fetchone()[0] == 3
+
+
+def test_list_careers_sorted(tmp_path: Path) -> None:
+    with SqliteCatalogStore(tmp_path / "catalog.db") as catalog:
+        catalog.get_or_create_career("Roma")
+        catalog.get_or_create_career("Lazio")
+        assert catalog.list_careers() == ["Lazio", "Roma"]

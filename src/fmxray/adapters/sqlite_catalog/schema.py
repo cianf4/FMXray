@@ -35,6 +35,16 @@ MIGRATIONS: tuple[str, ...] = (
         created_at TEXT NOT NULL
     );
     """,
+    """
+    CREATE TABLE column_views (
+        name TEXT PRIMARY KEY,
+        columns_json TEXT NOT NULL
+    );
+    CREATE TABLE career_sources (
+        career_id INTEGER PRIMARY KEY REFERENCES careers(id),
+        path TEXT NOT NULL
+    );
+    """,
 )
 
 

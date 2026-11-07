@@ -50,6 +50,9 @@ class SqliteCatalogStore:
         assert career_id is not None
         return career_id
 
+    def list_careers(self) -> list[str]:
+        return [row[0] for row in self._conn.execute("SELECT name FROM careers ORDER BY name")]
+
     def find_career(self, name: str) -> int | None:
         row = self._conn.execute("SELECT id FROM careers WHERE name = ?", (name,)).fetchone()
         return None if row is None else int(row[0])
