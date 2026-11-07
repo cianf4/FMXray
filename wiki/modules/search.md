@@ -1,6 +1,6 @@
 ---
 title: Modulo domain.search (motore di ricerca)
-updated: 2026-11-04
+updated: 2026-11-06
 sources:
   - src/fmxray/domain/search/
   - src/fmxray/domain/text.py
@@ -26,6 +26,7 @@ Filtri combinabili su qualunque campo del giocatore (SP2). Un albero di filtri d
 | `parser.py` | `parse(text)`, `parse_sort(text)`, `SortKey`, `DEFAULT_SORT`, `SEARCH_SCHEMA` | barra a testo e ordinamento |
 | `aliases.py` | `ALIASES`, `resolve_field` | nomi corti (`acc`, `det`, `value`, `club`, …) |
 | `derived.py` | `prepare_frame(frame, game_date)`, `TEXT_FIELDS`, `DERIVED_FIELDS` | `contract_left`, `free_agent`, colonne `__folded` |
+| `printer.py` | `to_text(spec)` | albero → testo della barra, inverso di `parse` |
 | `errors.py` | `SearchError` → `UnknownFieldError`, `QueryParseError`, `SpecFormatError` | errori per l'utente (con posizione e suggerimenti) |
 
 ## Sintassi della barra

@@ -192,6 +192,7 @@ flowchart TB
 1. **Fondamenta:** progetto uv, strumenti, CI, layout dei pacchetti con regole di import, catalogo dei campi, adattatore fmsave, snapshot Parquet, catalogo SQLite, `fmxray import`; verifiche V1–V7.
 2. **Motore di ricerca:** Specification → Polars, ordinamento, ricerche salvate, barra a testo, export CSV. Senza UI.
 3. **Interfaccia della Fase 1:** mockup, finestra principale, tabella, pannello filtri, scheda giocatore, segni di affidabilità, aggiornamento automatico.
+   - **3b. Design grafico** (deciso il 2026-11-06): tre proposte di stile (di Claude, con impeccable, con taste-skill) applicate ai token del tema di SP3.
 4. **Storico e newgen:** sfoltimento, crescita, progress rate, newgen, watchlist.
 5. **Rating per ruolo:** profili TOML, valori di partenza, editor.
 6. **Proiezioni e rating futuro.**

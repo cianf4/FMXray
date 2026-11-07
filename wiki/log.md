@@ -42,3 +42,7 @@ confidence: high
 - Changed files: PR #2 e #3 unite in `main` (nessun file sorgente nuovo)
 - Pages updated: project/status, project/work-tracker, agent/handoff, agent/context, engineering/development, overview-fm-x-ray, agent/activity
 - Follow-ups: `CLAUDE.md` alla radice con le regole di lavoro; brainstorming SP3
+
+## [2026-11-06] ingest | SP3 Interfaccia
+- Nuova pagina: modules/ui.md
+- Aggiornate: modules/README, application, sqlite-catalog, search; engineering/architecture, testing, development, change-map; project/decisions (D23–D25), status, work-tracker; agent/handoff, activity; index

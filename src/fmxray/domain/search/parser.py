@@ -213,6 +213,8 @@ class _Parser:
             return TextContains(field, fold(raw))
         dtype = SEARCH_SCHEMA[field]
         if isinstance(dtype, pl.List):
+            if dtype.inner.is_integer():
+                return ListContains(field, _typed_value(field, pl.Int64(), value))
             if not isinstance(dtype.inner, pl.String):
                 raise QueryParseError(f"{field!r} cannot be searched by text", value.pos)
             return ListContains(field, raw.upper() if field in _POSITION_LISTS else raw.lower())

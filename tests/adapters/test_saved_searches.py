@@ -76,7 +76,7 @@ def test_v1_database_is_migrated(tmp_path: Path) -> None:
     conn.close()
     SqliteSavedSearchStore(db).close()
     with sqlite3.connect(db) as conn:
-        assert conn.execute("PRAGMA user_version").fetchone()[0] == 2
+        assert conn.execute("PRAGMA user_version").fetchone()[0] == len(MIGRATIONS)
     conn.close()
     with SqliteCatalogStore(db) as catalog:
         assert catalog.find_career("Roma") is not None

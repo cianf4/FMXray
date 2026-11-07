@@ -58,3 +58,11 @@ Log append-only.
 - **Validation:** Not verified - solo documentazione.
 - **Decisions:** le regole di lavoro stanno in `CLAUDE.md` del repo, non solo nella memoria locale di Claude.
 - **Follow-up:** brainstorming SP3.
+
+## 2026-11-06 - Claude Code (Opus 5.5) - esecuzione SP3
+
+- **Trigger:** piano SP3 approvato; dipendenze installate dall'utente (`uv add`).
+- **Actions:** Task 1–10 inline con TDD; misure sul save reale (apertura ~1 s, filtri 13–100 ms).
+- **Validation:** `uv run pytest` → 209 passed (save reale incluso); ruff, mypy, lint-imports (7 contratti) puliti.
+- **Decisions:** D23–D25; rulings nel ledger (spin box invece di un cursore a due maniglie, watcher a polling, `list_careers`, scheda dalla riga del risultato).
+- **Follow-up:** prova a mano dell'utente, commit, PR, SP3b.

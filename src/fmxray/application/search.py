@@ -14,6 +14,8 @@ from fmxray.domain.search.parser import DEFAULT_SORT, SortKey
 from fmxray.domain.search.spec import Spec, fields_in
 from fmxray.domain.snapshot import SnapshotMeta
 
+CACHED_SNAPSHOTS = 2
+
 _MONEY_FIELDS = frozenset(
     spec.name for spec in PLAYER_CATALOG.fields if spec.unit is Unit.MONEY_INTERNAL
 )
@@ -31,14 +33,18 @@ class SearchPlayers:
     def __init__(self, store: SnapshotStore, catalog: CatalogStore) -> None:
         self._store = store
         self._catalog = catalog
-        # ponytail: one-entry cache, enough for the CLI and a GUI showing one snapshot.
-        self._cached: tuple[str, pl.DataFrame] | None = None
+        # Latest and previous snapshot: "new players" compares the two without re-reading.
+        self._cached: dict[str, pl.DataFrame] = {}
 
     def _prepared(self, meta: SnapshotMeta) -> pl.DataFrame:
-        if self._cached is None or self._cached[0] != meta.snapshot_id:
-            frame = self._store.read(meta.career_id, meta.snapshot_id)
-            self._cached = (meta.snapshot_id, prepare_frame(frame, meta.game_date))
-        return self._cached[1]
+        frame = self._cached.pop(meta.snapshot_id, None)
+        if frame is None:
+            raw = self._store.read(meta.career_id, meta.snapshot_id)
+            frame = prepare_frame(raw, meta.game_date)
+        self._cached[meta.snapshot_id] = frame  # most recently used last
+        while len(self._cached) > CACHED_SNAPSHOTS:
+            del self._cached[next(iter(self._cached))]
+        return frame
 
     def execute(
         self,

@@ -4,9 +4,10 @@ from pathlib import Path
 
 import pytest
 
+from fmxray.application.app import App
 from fmxray.application.errors import UnreadableSaveError
 from fmxray.bootstrap import build_app
-from fmxray.cli.commands import App, run
+from fmxray.cli.commands import run
 from tests.application.fakes import FakeSaveSource, make_reading
 from tests.factories import make_player_frame
 

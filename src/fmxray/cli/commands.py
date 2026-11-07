@@ -3,17 +3,13 @@
 import argparse
 import sys
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass
 from importlib.metadata import version
 from pathlib import Path
 
+from fmxray.application.app import App
 from fmxray.application.errors import CareerNotFoundError, FmxrayError
 from fmxray.application.export import export_csv
-from fmxray.application.import_save import ImportSave
-from fmxray.application.ports import CatalogStore, SavedSearchStore
-from fmxray.application.saved_search import RunSavedSearch, SaveSearch
-from fmxray.application.search import SearchPlayers, SearchResult
-from fmxray.application.show_player import ShowPlayer
+from fmxray.application.search import SearchResult
 from fmxray.cli import render
 from fmxray.domain.search.errors import SearchError
 from fmxray.domain.search.parser import parse, parse_sort
@@ -22,17 +18,6 @@ from fmxray.domain.search.spec import Spec, fields_in
 DEFAULT_LIMIT = 50
 TABLE_COLUMNS = ("uid", "name", "age", "club_name", "ca", "pa", "natural_positions")
 MONEY_NOTE = "note: money fields are in the save's internal unit (not euros yet)"
-
-
-@dataclass(frozen=True)
-class App:
-    import_save: ImportSave
-    show_player: ShowPlayer
-    catalog: CatalogStore
-    search_players: SearchPlayers
-    save_search: SaveSearch
-    run_saved_search: RunSavedSearch
-    saved_searches: SavedSearchStore
 
 
 def _positive_int(text: str) -> int:

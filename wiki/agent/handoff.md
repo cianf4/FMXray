@@ -13,19 +13,20 @@ confidence: medium
 
 ## Current Work State
 
-- Status: SP2 chiuso (PR #2 e #3 unite); SP3 in brainstorming
-- Goal: SP3 (interfaccia della Fase 1): brainstorming → spec → piano
-- Last completed step: fix CSV (PR #3, merge `9bfc8a1`); wiki allineata e `CLAUDE.md` aggiunto sul branch `docs/handoff-portatile`
-- Current branch: `docs/handoff-portatile` (da unire in `main`)
-- Last commit: `9bfc8a1`
-- Worktree: dirty solo per wiki e `CLAUDE.md`
+- Status: SP3 implementato sul branch `feat/sp3-interfaccia`, non ancora committato (tranne spec e piano, `40320d5`)
+- Goal: prova a mano dell'utente, commit, push, CI, PR di SP3
+- Last completed step: Task 10 del [piano SP3](../../docs/superpowers/plans/2026-11-06-sp3-interfaccia.md) (test GUI sul save reale, wiki)
+- Current branch: `feat/sp3-interfaccia`
+- Last commit: `40320d5` (spec e piano di SP3)
+- Worktree: dirty (tutto SP3: `src`, `tests`, `wiki`, `pyproject.toml`, `uv.lock`, CI)
 
 ## Baton For Next Coding Agent
 
 | Order | Task | Start files | Done when | Verification command | Notes / blockers |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Riprendere il brainstorming di SP3 con `superpowers:brainstorming` | spec madre §8 e §12, [decisioni](../project/decisions.md) D10, D11, D21 | spec SP3 approvata e committata | Not verified - documento | prima domanda già fatta: cosa fa e guarda l'utente sul secondo schermo; mockup con il visual companion |
-| 2 | Piano di SP3 con `superpowers:writing-plans` | spec SP3 | piano approvato | Not verified - documento | aggiungere PySide6 e pytest-qt (installazione la lancia l'utente) |
+| 1 | L'utente prova `uv run fmxray-gui` (filtri, popup, ruoli, scheda, ricerche salvate, viste, export, "Watch folder…" con un salvataggio di FM) | [ui](../modules/ui.md) | l'utente conferma o segnala problemi | `uv run fmxray-gui` | le correzioni con TDD prima dei commit |
+| 2 | Commit raggruppati, push, PR con `gh pr create` | `local/pr-sp3.md` | CI verde su Linux e Windows | `gh pr checks` | i test Qt in CI Linux usano `libegl1 libxkbcommon0 libgl1` |
+| 3 | SP3b design grafico: brainstorming | `src/fmxray/ui/theme.py`, spec madre §12 | spec SP3b approvata | Not verified - documento | tre proposte: Claude, impeccable, taste-skill |
 
 ## Blockers
 
@@ -44,7 +45,7 @@ confidence: medium
 
 | Command | Directory | Result | Evidence / notes |
 | --- | --- | --- | --- |
-| `uv run pytest` | repo | 118 passed | save reale incluso (2026-11-04) |
+| `uv run pytest` | repo | 209 passed | save reale incluso (2026-11-06) |
 | `uv run fmxray search "finishng>15" --career Roma` | repo | exit 1, suggerisce `finishing` | criterio 3 della spec SP2 |
 
 ## Do Not Redo

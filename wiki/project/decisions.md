@@ -38,6 +38,9 @@ Prese dall'utente durante il brainstorming (2026-10-31 → 2026-11-03). Dettagli
 | D20 | Ordine dei sottoprogetti SP1–SP9 della spec madre §12 | | spec madre §12 |
 | D21 | Interfaccia in **inglese**, testi pronti per la traduzione (`tr()`) | scelta dell'utente | spec madre §8 |
 | D22 | Repository **pubblico** su GitHub, licenza **MIT** | scelta dell'utente | spec madre §11 |
+| D23 | Filtri **da UI** come via principale (popup a schede in stile FMRTE, campo dei ruoli, filtri rapidi); la barra a testo resta facoltativa e sincronizzata | l'utente non vuole imparare una sintassi | spec SP3 |
+| D24 | Design grafico in un sottoprogetto a parte, **SP3b**: tre proposte (Claude, impeccable, taste-skill) sui token di `ui/theme.py` | prima la struttura, poi lo stile | spec madre §12 |
+| D25 | `App` in `application`; l'import gira in un thread con adattatori propri (`import_factory`); il watcher interroga la cartella ogni 500 ms | SQLite non condivide connessioni tra thread; stesso comportamento su Windows, Linux e Proton | piano SP3 |
 
 ## Ancora da decidere
 
