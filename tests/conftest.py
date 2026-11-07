@@ -5,6 +5,9 @@ from pathlib import Path
 
 import pytest
 
+# Qt widgets run without a display (CI, Linux servers); set before any Qt import.
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
