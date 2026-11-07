@@ -8,6 +8,7 @@ from typing import Protocol
 
 import polars as pl
 
+from fmxray.application.column_views import ColumnView
 from fmxray.domain.fields import Provenance
 from fmxray.domain.search.spec import Spec
 from fmxray.domain.snapshot import Snapshot, SnapshotMeta
@@ -43,6 +44,8 @@ class CatalogStore(Protocol):
 
     def find_career(self, name: str) -> int | None: ...
 
+    def list_careers(self) -> list[str]: ...  # names, sorted
+
     def find_by_sha256(self, career_id: int, sha256: str) -> SnapshotMeta | None: ...
 
     def add_snapshot(self, meta: SnapshotMeta) -> None: ...
@@ -68,3 +71,19 @@ class SavedSearchStore(Protocol):
     def list(self) -> list[SavedSearch]: ...
 
     def delete(self, name: str) -> bool: ...
+
+
+class ColumnViewStore(Protocol):
+    def save(self, view: ColumnView) -> None: ...  # overwrites a view with the same name
+
+    def list(self) -> list[ColumnView]: ...
+
+    def delete(self, name: str) -> bool: ...
+
+
+class CareerSourceStore(Protocol):
+    """The save folder (or file) each career follows."""
+
+    def set(self, career_id: int, path: Path) -> None: ...
+
+    def get(self, career_id: int) -> Path | None: ...

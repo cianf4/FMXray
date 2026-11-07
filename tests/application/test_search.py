@@ -1,5 +1,6 @@
 from typing import Any
 
+import polars as pl
 import pytest
 
 from fmxray.application.errors import CareerNotFoundError
@@ -65,3 +66,30 @@ def test_matching_uids_and_previous_snapshot() -> None:
     assert previous_snapshot(catalog, meta.career_id, meta.snapshot_id) is None
     loaded, frame = load_snapshot(store, catalog, "Roma")
     assert loaded == meta and frame.height == 2
+
+
+class _CountingStore(InMemorySnapshotStore):
+    def __init__(self) -> None:
+        super().__init__()
+        self.reads: list[str] = []
+
+    def read(self, career_id: int, snapshot_id: str) -> pl.DataFrame:
+        self.reads.append(snapshot_id)
+        return super().read(career_id, snapshot_id)
+
+
+def test_two_snapshots_stay_cached() -> None:
+    store, catalog = _CountingStore(), InMemoryCatalogStore()
+    career = catalog.get_or_create_career("Roma")
+    metas = [
+        make_meta(snapshot_id=f"s{i}", career_id=career, source_sha256=str(i) * 64)
+        for i in range(2)
+    ]
+    for meta in metas:
+        store.write(Snapshot(meta, make_player_frame(3)))
+        catalog.add_snapshot(meta)
+    search = SearchPlayers(store, catalog)
+    for _ in range(3):  # what counting "new" players for each saved search does
+        for meta in metas:
+            search.matching_uids(meta, MatchAll())
+    assert store.reads == ["s0", "s1"]

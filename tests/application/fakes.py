@@ -5,6 +5,7 @@ from pathlib import Path
 
 import polars as pl
 
+from fmxray.application.column_views import ColumnView
 from fmxray.application.errors import SavedSearchExistsError
 from fmxray.application.ports import SavedSearch, SaveReading
 from fmxray.domain.fields import PLAYER_CATALOG, Provenance
@@ -62,6 +63,9 @@ class InMemoryCatalogStore:
     def get_or_create_career(self, name: str) -> int:
         return self.careers.setdefault(name, len(self.careers) + 1)
 
+    def list_careers(self) -> list[str]:
+        return sorted(self.careers)
+
     def find_career(self, name: str) -> int | None:
         return self.careers.get(name)
 
@@ -101,3 +105,28 @@ class InMemorySavedSearchStore:
 
     def delete(self, name: str) -> bool:
         return self.searches.pop(name, None) is not None
+
+
+class InMemoryColumnViewStore:
+    def __init__(self) -> None:
+        self.views: dict[str, ColumnView] = {}
+
+    def save(self, view: ColumnView) -> None:
+        self.views[view.name] = view
+
+    def list(self) -> list[ColumnView]:
+        return [self.views[name] for name in sorted(self.views)]
+
+    def delete(self, name: str) -> bool:
+        return self.views.pop(name, None) is not None
+
+
+class InMemoryCareerSourceStore:
+    def __init__(self) -> None:
+        self.paths: dict[int, Path] = {}
+
+    def set(self, career_id: int, path: Path) -> None:
+        self.paths[career_id] = path
+
+    def get(self, career_id: int) -> Path | None:
+        return self.paths.get(career_id)
