@@ -1,6 +1,6 @@
 ---
 title: Agent Handoff
-updated: 2026-11-06
+updated: 2026-11-07
 sources:
   - wiki/agent/activity.md
   - wiki/project/work-tracker.md
@@ -13,20 +13,18 @@ confidence: medium
 
 ## Current Work State
 
-- Status: SP3 implementato sul branch `feat/sp3-interfaccia`, non ancora committato (tranne spec e piano, `40320d5`)
-- Goal: prova a mano dell'utente, commit, push, CI, PR di SP3
-- Last completed step: Task 10 del [piano SP3](../../docs/superpowers/plans/2026-11-06-sp3-interfaccia.md) (test GUI sul save reale, wiki)
-- Current branch: `feat/sp3-interfaccia`
-- Last commit: `40320d5` (spec e piano di SP3)
-- Worktree: dirty (tutto SP3: `src`, `tests`, `wiki`, `pyproject.toml`, `uv.lock`, CI)
+- Status: SP3b implementato sul branch `feat/sp3b-design`, non committato (tranne spec e piano, `7233f3d`)
+- Goal: prova dell'utente (`uv run fmxray-gui`), commit, push, PR
+- Last completed step: Task 7 del [piano SP3b](../../docs/superpowers/plans/2026-11-07-sp3b-design-grafico.md) e revisione finale inline
+- Current branch: `feat/sp3b-design`
+- Worktree: dirty (tutto SP3b: `src`, `tests`, `wiki`, `docs`, `pyproject.toml`, `uv.lock`, font in `src/fmxray/ui/fonts/`)
 
 ## Baton For Next Coding Agent
 
 | Order | Task | Start files | Done when | Verification command | Notes / blockers |
 | --- | --- | --- | --- | --- | --- |
-| 1 | L'utente prova `uv run fmxray-gui` (filtri, popup, ruoli, scheda, ricerche salvate, viste, export, "Watch folder…" con un salvataggio di FM) | [ui](../modules/ui.md) | l'utente conferma o segnala problemi | `uv run fmxray-gui` | le correzioni con TDD prima dei commit |
-| 2 | Commit raggruppati, push, PR con `gh pr create` | `local/pr-sp3.md` | CI verde su Linux e Windows | `gh pr checks` | i test Qt in CI Linux usano `libegl1 libxkbcommon0 libgl1` |
-| 3 | SP3b design grafico: brainstorming | `src/fmxray/ui/theme.py`, spec madre §12 | spec SP3b approvata | Not verified - documento | tre proposte: Claude, impeccable, taste-skill |
+| 1 | Prova dell'utente e commit/PR di SP3b | [ui](../modules/ui.md), `local/pr-sp3b.md` | PR aperta, CI verde | `gh pr checks` | `docs/design/PRODUCT.md` va committato (descrizione del prodotto per impeccable) |
+| 2 | SP4 storico e newgen: brainstorming | spec madre §9, §12 | spec SP4 approvata | Not verified - documento | V5/V7 servono un nuovo `Roma.fm` |
 
 ## Blockers
 

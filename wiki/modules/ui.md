@@ -1,6 +1,6 @@
 ---
 title: Modulo ui (interfaccia desktop)
-updated: 2026-11-06
+updated: 2026-11-07
 sources:
   - src/fmxray/ui/
   - src/fmxray/application/session.py
@@ -21,7 +21,13 @@ Finestra PySide6 (Qt Widgets) da tenere sul secondo schermo (SP3). `ui` contiene
 ## Public interface
 | File | Nome | Ruolo |
 | --- | --- | --- |
-| `main_window.py` | `MainWindow(app, session)` | barra carriera/snapshot, filtri rapidi, barra a testo, ricerche salvate e viste, tabella, scheda; `refresh()`, `reload_snapshot()`, `follow_folder()` |
+| `main_window.py` | `MainWindow(app, session, settings)` | due righe sopra la tabella (carriera; filtri con chip), barra a testo a richiesta (`Ctrl+K`), barra laterale, linguette delle viste, tabella, scheda; `refresh()`, `reload_snapshot()`, `follow_folder()`, `show_text_bar()` |
+| `filter_chips.py` | `FilterChips` | filtri attivi come chip rimovibili; chip "Advanced filter" per il testo non rappresentabile |
+| `view_tabs.py` | `ViewTabs` | viste di colonne come linguette, `+` salva la vista corrente, linguetta "Custom" |
+| `saved_sidebar.py` | `SavedSidebar`, `SavedEntry` | ricerche salvate in una barra richiudibile con il totale dei nuovi |
+| `settings.py` | `UiSettings` | densità e barra laterale ricordate (`QSettings`) |
+| `icons.py` | `icon()`, `ICONS` | icone Phosphor via QtAwesome, colorate dai token |
+| `motion.py` | `grow_in`, `fade_in`, `HoverFade` | animazioni brevi (`ANIMATION_MS = 150`) |
 | `quick_filters.py` | `QuickFilters` | età, CA, PA, posizioni, nome o club; pulsante "All filters… (N active)" |
 | `filters_dialog.py` | `FiltersDialog` | popup non modale, una scheda per `FILTER_TABS`, un controllo per ogni campo |
 | `range_slider.py` | `RangeControl` | min–max: spin box sulle scale fisse (1–20, 1–100, 1–200), caselle di testo altrove; gli estremi = nessun filtro |
@@ -30,7 +36,7 @@ Finestra PySide6 (Qt Widgets) da tenere sul secondo schermo (SP3). `ui` contiene
 | `table_model.py` | `PlayerTableModel` | `QAbstractTableModel` su un `SearchResult`; `sort()` chiede l'ordinamento a Polars (`sort_requested`) |
 | `watcher.py` | `SaveFolderWatcher` | segnale `save_ready(Path)` quando un `.fm` resta uguale per `STABLE_FOR_MS = 3000` |
 | `import_worker.py` | `ImportRunner` | import su `QThreadPool`; segnali `imported`, `failed`; un import alla volta, l'ultimo in coda vince |
-| `theme.py` | `TOKENS`, `stylesheet()`, `attribute_band()` | tutti i colori e le misure: SP3b cambia solo questo file |
+| `theme.py` | `TOKENS`, `stylesheet()`, `attribute_band()`, `Density`, `row_height()`, `load_fonts()` | tutti i colori e le misure (proposta A "Pitch-side" con accento blu `#4a8ad6`, scelta in SP3b); font Figtree e JetBrains Mono inclusi in `ui/fonts/` (OFL) |
 
 In `application`: `FilterState` ↔ `Spec` (`to_spec`, `from_spec`), `FILTER_TABS` e `control_kind`, `BUILTIN_VIEWS` (compresa "Hidden by FM"), `BrowseSession`, `default_save_folders`.
 
@@ -48,6 +54,7 @@ flowchart LR
 ```
 
 ## Invariants
+- Colori solo in `theme.py` (`grep` di `#rrggbb` fuori da `theme.py` vuoto). Su FM27 ogni campo è "unconfirmed": invece di un `ⓘ` per colonna c'è una sola nota nella riga di stato.
 - Barra a testo e controlli mostrano lo stesso filtro: `from_spec(to_spec(s)) == s` e `parse(to_text(spec)) == spec` (Hypothesis). Un testo che i controlli non sanno mostrare (es. `or` tra campi diversi) diventa `session.advanced` e blocca i controlli; un testo che non si legge mostra l'errore e lascia tabella e filtro com'erano.
 - Ogni campo di `SEARCH_SCHEMA` ha un controllo nel popup (`test_every_field_is_filterable`).
 - L'import gira in un altro thread con un `ImportSave` creato **lì** (`App.import_factory`): le connessioni SQLite non passano tra thread.

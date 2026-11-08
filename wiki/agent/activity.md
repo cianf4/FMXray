@@ -66,3 +66,11 @@ Log append-only.
 - **Validation:** `uv run pytest` → 209 passed (save reale incluso); ruff, mypy, lint-imports (7 contratti) puliti.
 - **Decisions:** D23–D25; rulings nel ledger (spin box invece di un cursore a due maniglie, watcher a polling, `list_careers`, scheda dalla riga del risultato).
 - **Follow-up:** prova a mano dell'utente, commit, PR, SP3b.
+
+## 2026-11-07 - Claude Code (Opus 5.5) - SP3b design grafico
+
+- **Trigger:** utente: "troppe informazioni a schermo", riordino e grafica.
+- **Actions:** tre mockup (A Claude, B impeccable con dado e7d2b799, C taste-skill data-terminal); scelta A con il blu di C; QtAwesome e font inclusi su richiesta; riordino, chip, linguette, barra laterale, densità, animazioni; screenshot offscreen confrontati con il mockup.
+- **Validation:** `uv run pytest` → 247 passed (save reale incluso); ruff, mypy, lint-imports puliti.
+- **Decisions:** D26; rulings nel ledger (una sola nota "unconfirmed" invece dei segni per colonna, scheda a due blocchi per riga).
+- **Follow-up:** prova dell'utente, PR, SP4.

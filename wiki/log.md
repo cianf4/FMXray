@@ -46,3 +46,6 @@ confidence: high
 ## [2026-11-06] ingest | SP3 Interfaccia
 - Nuova pagina: modules/ui.md
 - Aggiornate: modules/README, application, sqlite-catalog, search; engineering/architecture, testing, development, change-map; project/decisions (D23–D25), status, work-tracker; agent/handoff, activity; index
+
+## [2026-11-07] sync | SP3b design grafico
+- Aggiornate: modules/ui, project/decisions (D26), status, work-tracker; agent/handoff, activity
