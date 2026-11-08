@@ -35,3 +35,5 @@ Thumbs.db
 
 # design-hook config (impeccable plugin), local only
 /.impeccable/
+# taste-skill working files (local only)
+/.taste-skill/

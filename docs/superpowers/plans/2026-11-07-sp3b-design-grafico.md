@@ -6,7 +6,7 @@
 
 **Architecture:** nessuna logica nuova fuori dalla UI tranne la descrizione dei filtri attivi come chip (`application.filters`, Python puro). I widget nuovi stanno in `ui/` accanto a quelli di SP3; tutti i colori, i font e le misure restano in `ui/theme.py`, che riceve i token della proposta scelta. Le preferenze dell'interfaccia (densità, barra laterale aperta) passano da un piccolo wrapper di `QSettings`.
 
-**Tech Stack:** come SP3 (Python 3.14, PySide6 6.12.0, pytest-qt 4.5.0). Mockup nel visual companion di superpowers; skill `impeccable` e `taste-skill` per due delle tre proposte.
+**Tech Stack:** come SP3 (Python 3.14, PySide6 6.12.0, pytest-qt 4.5.0) più QtAwesome 1.4.2 e due font OFL inclusi. Mockup nel visual companion di superpowers; skill `impeccable` e `taste-skill` per due delle tre proposte.
 
 **Spec:** [docs/superpowers/specs/2026-11-07-sp3b-design-grafico-design.md](../specs/2026-11-07-sp3b-design-grafico-design.md); in subordine la [spec di SP3](../specs/2026-11-06-sp3-interfaccia-design.md).
 
@@ -14,7 +14,7 @@
 
 - Valgono i Global Constraints dei piani SP1–SP3: niente `uv add`/`uv sync`, `git commit`, `git push` da parte di chi esegue; comandi completi senza segnaposti e senza attribuzioni; si attende "fatto".
 - Branch: `feat/sp3b-design`, da `main` aggiornato; il primo commit contiene spec e piano.
-- **Nessuna dipendenza nuova** e nessun font nel repo: font di sistema con fallback.
+- Dipendenze nuove, decise dall'utente: `qtawesome==1.4.2` (icone Phosphor, prefisso `ph.`, verificato sulla documentazione PyPI); font Figtree e JetBrains Mono (OFL) in `src/fmxray/ui/fonts/` con i loro `OFL.txt`. Nient'altro.
 - I mockup usano solo ciò che Qt Style Sheets riproduce: colori, bordi, raggi, padding, font, gradienti lineari semplici; niente ombre sfumate, filtri, transizioni CSS.
 - Tutti i colori, font e misure dei widget vengono da `ui/theme.py`.
 - Animazioni con `QPropertyAnimation`, durata `ANIMATION_MS = 150`; i test non dipendono dalla loro durata (`animate=False` dove serve).
@@ -49,13 +49,16 @@
 
 **Files:**
 - Modify: `src/fmxray/ui/theme.py`, `tests/ui/test_theme.py`
-- Create: `src/fmxray/ui/settings.py`, `tests/ui/test_settings.py`
+- Create: `src/fmxray/ui/settings.py`, `src/fmxray/ui/icons.py`, `src/fmxray/ui/fonts/` (font e licenze scaricati dall'utente), `tests/ui/test_settings.py`, `tests/ui/test_icons_fonts.py`
 
 **Interfaces:**
 - Produces:
   - `theme.py`: `TOKENS` con i valori della proposta scelta più le chiavi nuove `font_numbers` (famiglia per i numeri, con fallback), `row_height_medium`, `row_height_compact`, `chip_background`, `chip_text`, `primary`, `primary_text`; `class Density(StrEnum)`: `MEDIUM = "medium"`, `COMPACT = "compact"`; `row_height(density: Density, tokens: Mapping[str, str] = TOKENS) -> int`; `stylesheet(tokens=TOKENS)` invariato nella firma; `ANIMATION_MS = 150`.
+  - `icons.py`: `icon(name: str, color_token: str = "text") -> QIcon` (wrapper di `qtawesome.icon("ph." + name, color=TOKENS[color_token])`); `ICONS: Mapping[str, str]` con i nomi usati nell'app (`filters` → `funnel`, `copy` → `copy`, `saved` → `star`, `text_bar` → `terminal-window`, `density` → `rows`, `close` → `x`, `add` → `plus`, `import` → `download-simple`, `watch` → `eye`); i nomi Phosphor verificati sul pacchetto installato.
+  - `theme.py`: `load_fonts() -> tuple[str, str]` (registra i due file con `QFontDatabase.addApplicationFont`, restituisce le famiglie; se un file manca restituisce il font di sistema e non fallisce); `font_text` e `font_numbers` nei token.
   - `settings.py`: `class UiSettings`: `__init__(self, store: QSettings)`; proprietà `density: Density` (valore non valido o mancante → `Density.MEDIUM`) e `sidebar_open: bool` (default `False`), entrambe con setter che scrivono subito.
-- [ ] **Step 1: test** `test_theme.py`: `test_row_heights` (`row_height(Density.COMPACT) < row_height(Density.MEDIUM)`); `test_new_tokens_present`; i test esistenti restano. `test_settings.py` (`QSettings` su un file `.ini` in `tmp_path`): `test_defaults`, `test_roundtrip`, `test_bad_values_fall_back` (`density="huge"`, `sidebar_open="maybe"`).
+- [ ] **Step 0:** stampare per l'utente `uv add "qtawesome==1.4.2"` e i comandi `curl` che scaricano in `src/fmxray/ui/fonts/` `Figtree[wght].ttf`, `JetBrainsMono[wght].ttf` e i due `OFL.txt` dal repository google/fonts; attendere "fatto". Verificare che `uv_build` includa i `.ttf` nel pacchetto (`uv build` e lista del wheel) o annotare la regola necessaria.
+- [ ] **Step 1: test** `test_icons_fonts.py`: `test_every_icon_exists` (ogni voce di `ICONS` dà un `QIcon` non nullo); `test_fonts_load` (famiglie "Figtree" e "JetBrains Mono"); `test_missing_font_falls_back` (cartella vuota → nessuna eccezione). `test_theme.py`: `test_row_heights` (`row_height(Density.COMPACT) < row_height(Density.MEDIUM)`); `test_new_tokens_present`; i test esistenti restano. `test_settings.py` (`QSettings` su un file `.ini` in `tmp_path`): `test_defaults`, `test_roundtrip`, `test_bad_values_fall_back` (`density="huge"`, `sidebar_open="maybe"`).
 - [ ] **Step 2:** FAIL → implementare → PASS; ruff, mypy, lint-imports.
 
 ### Task 3: Chip dei filtri attivi
@@ -104,6 +107,7 @@
   - Layout: riga 1 = carriera, snapshot, informazioni, Import…, Watch folder…, densità; riga 2 = "All filters (N)" come pulsante principale (proprietà `role="primary"`), filtri rapidi, chip, icona della barra a testo, Save search, Export CSV; `text_row` nascosta di default, mostrata o nascosta con l'icona e con la scorciatoia `TEXT_BAR_SHORTCUT = "Ctrl+K"` (focus sulla barra quando si apre); poi linguette, tabella, scheda; `sidebar` a sinistra.
   - `QuickFilters`: il pulsante "All filters" passa alla riga dei filtri come pulsante principale (`all_button` resta l'attributo pubblico).
   - `PlayerCard`: testata compatta in tre righe (nome + "Copy name"; `età · club · ruoli`; `CA` e `PA` grandi con `font_numbers`); `field_label` resta per tutti i campi delle schede interne; cambio di giocatore con dissolvenza `ANIMATION_MS` (disattivabile: `PlayerCard(animate=False)` nei test).
+  - Animazioni curate con `QPropertyAnimation` e `QEasingCurve.OutCubic`, tutte `ANIMATION_MS`: chip che entrano (larghezza da 0) ed escono; pulsanti con cambio di colore al passaggio del mouse (`QVariantAnimation` sul colore di sfondo, dal token `raised` a `border`); icone di QtAwesome su tutti i pulsanti con un nome in `ICONS`.
   - `FiltersDialog`: all'apertura dissolvenza di `windowOpacity` da 0 a 1 in `ANIMATION_MS` (dove la piattaforma non supporta l'opacità della finestra, si apre e basta).
   - Densità: `density_button` alterna media/compatta, applica `row_height` alle righe della tabella e scrive `settings.density`; all'avvio legge `settings.density` e `settings.sidebar_open`.
 - [ ] **Step 1: test** `test_main_window.py`: aggiornare `saved_list` → `sidebar`; nuovi `test_text_bar_hidden_by_default_and_toggles` (`text_row` nascosta; `Ctrl+K` la mostra e dà il focus a `text_bar`); `test_rows_above_table` (con `text_row` nascosta, sopra la tabella ci sono solo le due righe: `career_bar` e `filter_bar`); `test_chip_removal_updates_controls` (PA ≥ 180 dai filtri rapidi → chip → rimozione → filtri rapidi e popup vuoti, tabella di nuovo completa); `test_advanced_filter_chip` (testo `age<2 or ca>101` → chip "Advanced filter"; rimozione → filtro vuoto, controlli sbloccati); `test_view_tabs_change_columns` (linguetta Technical → colonne della vista); `test_density_toggle_persists` (`UiSettings` su `.ini` in `tmp_path`: compatta → nuova finestra con le stesse impostazioni parte compatta, altezza riga = `row_height(Density.COMPACT)`). `test_player_card.py`: `test_compact_header` (tre righe di testata, CA e PA presenti). Tutti i test di SP3 restano verdi.

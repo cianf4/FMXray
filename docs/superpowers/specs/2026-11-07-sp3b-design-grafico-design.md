@@ -31,7 +31,7 @@ L'app di SP3 funziona e all'utente piace, ma a schermo c'è troppo insieme: la c
 ## Vincoli
 
 - Valgono i Global Constraints di SP1–SP3 (Python 3.14, PySide6 6.12.0, nessuna installazione o commit da parte di Claude, niente segnaposti nei comandi, niente attribuzioni a Claude).
-- **Nessuna dipendenza nuova** (né Python né font da scaricare nel repo): font di sistema con fallback.
+- ~~Nessuna dipendenza nuova~~ → cambiato dall'utente il 2026-11-07: **QtAwesome 1.4.2** (icone Phosphor, MIT) e **due font open** inclusi nel pacchetto (Figtree per il testo, JetBrains Mono per i numeri, licenza OFL con il loro `OFL.txt`), caricati con `QFontDatabase`. Animazioni con il motore di Qt (nessuna libreria esterna: per Qt Widgets non ne esiste una mantenuta).
 - I mockup HTML usano solo ciò che Qt Style Sheets sa rendere: colori, bordi, raggi, padding, font, gradienti semplici. Niente ombre sfumate, filtri, transizioni CSS, layout che Qt Widgets non riproduce.
 - Le animazioni usano le classi di animazione di Qt (`QPropertyAnimation` o equivalenti), durata breve; i test non dipendono dal loro tempo.
 - Interfaccia in inglese con `tr()`.
@@ -58,6 +58,31 @@ L'app di SP3 funziona e all'utente piace, ma a schermo c'è troppo insieme: la c
 2. **Riordino** nel codice (viste a linguette, barra laterale, barra a testo a richiesta, chip dei filtri, scheda compatta) con i test aggiornati.
 3. **Stile:** token e foglio di stile della proposta scelta, densità media/compatta, animazioni.
 4. Prova dell'utente nell'app, wiki, PR.
+
+## Scelta dell'utente (2026-11-07)
+
+**Proposta A "Pitch-side"**, con l'accento **blu di C** (`#4a8ad6`) al posto del verde. B scartata ("brutta"), C "carina ma monocolore". Mockup: `.superpowers/brainstorm/1275467-1794071954/content/sp3b-a-claude.html` (fuori da git).
+
+| Token | Valore |
+| --- | --- |
+| `background` | `#15181d` |
+| `surface` | `#1d2128` |
+| `raised` | `#252a33` |
+| `border` | `#323843` |
+| `text` | `#e8eaee` |
+| `text_muted` | `#9aa3b2` |
+| `primary` / `accent` | `#4a8ad6` |
+| `primary_text` | `#ffffff` |
+| `selection` | `#23384a` |
+| `chip_background` / `chip_text` | `#233040` / `#cfe3ff` |
+| `new` | `#4a8ad6` |
+| `unconfirmed` | `#d9a441` |
+| fasce 1–5 / 6–10 / 11–15 / 16–20 | `#d0605a` / `#e3a04b` / `#d9dde4` / `#5ccf8f` |
+| raggio | `6px` |
+| font testo / numeri | Figtree / JetBrains Mono |
+| righe media / compatta | `26px` / `20px` |
+
+Animazioni curate (utente): barra laterale che scorre, popup che appare, scheda che sfuma al cambio di giocatore, chip che entrano ed escono, risposta dei pulsanti al passaggio del mouse.
 
 ## Lasciato a chi costruisce
 
