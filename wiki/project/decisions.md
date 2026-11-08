@@ -41,6 +41,7 @@ Prese dall'utente durante il brainstorming (2026-10-31 → 2026-11-03). Dettagli
 | D23 | Filtri **da UI** come via principale (popup a schede in stile FMRTE, campo dei ruoli, filtri rapidi); la barra a testo resta facoltativa e sincronizzata | l'utente non vuole imparare una sintassi | spec SP3 |
 | D24 | Design grafico in un sottoprogetto a parte, **SP3b**: tre proposte (Claude, impeccable, taste-skill) sui token di `ui/theme.py` | prima la struttura, poi lo stile | spec madre §12 |
 | D26 | Stile **A "Pitch-side"** con l'accento blu `#4a8ad6`; QtAwesome (Phosphor) e font Figtree/JetBrains Mono inclusi; animazioni col motore di Qt | scelta dell'utente tra tre proposte (Claude, impeccable, taste-skill) | spec SP3b |
+| D27 | Dopo la prova: fondo nero neutro e accento **`#3ea6ff`**, **Inter 11pt** al posto di Figtree, **scheda del giocatore in Qt Quick (QML)** dentro la finestra a widget, con l'**esagono delle 6 aree** (medie degli attributi, calcolate in `domain/profile.py`) | il blu sembrava spento sul fondo blu-ardesia, il testo sgranato (Qt ignora il 115% di GNOME), le animazioni dei widget scattavano; QML anima sulla GPU | spec rifinitura visiva SP3b (2026-11-08) |
 | D25 | `App` in `application`; l'import gira in un thread con adattatori propri (`import_factory`); il watcher interroga la cartella ogni 500 ms | SQLite non condivide connessioni tra thread; stesso comportamento su Windows, Linux e Proton | piano SP3 |
 
 ## Ancora da decidere

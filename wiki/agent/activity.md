@@ -74,3 +74,11 @@ Log append-only.
 - **Validation:** `uv run pytest` → 247 passed (save reale incluso); ruff, mypy, lint-imports puliti.
 - **Decisions:** D26; rulings nel ledger (una sola nota "unconfirmed" invece dei segni per colonna, scheda a due blocchi per riga).
 - **Follow-up:** prova dell'utente, PR, SP4.
+
+## 2026-11-08 - Claude Code (Opus 5.5) - SP3b rifinitura visiva
+
+- **Trigger:** prova dell'utente: spazio vuoto a schermo intero, stile lontano dal mockup, font sgranati, animazioni a scatti; richiesta di esagono e più abbellimenti.
+- **Actions:** cause trovate con screenshot a 1920 px; spec e piano `2026-11-08-sp3b-rifinitura-visiva`; Task 1–7 inline con TDD (Inter e token, `domain/profile.py`, tabella, filtri rapidi, barra sovrapposta, scheda QML).
+- **Validation:** `uv run pytest` → 271 passed (save reale incluso); ruff, mypy, lint-imports puliti; wheel con `ui/qml/*.qml` e Inter.
+- **Decisions:** D27; rulings nel ledger (ombre senza `MultiEffect`, spazio della tabella diviso in proporzione invece che tutto a Name, testo QML con rendering nativo).
+- **Follow-up:** prova dell'utente, commit, PR, SP4.

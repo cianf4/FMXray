@@ -49,3 +49,6 @@ confidence: high
 
 ## [2026-11-07] sync | SP3b design grafico
 - Aggiornate: modules/ui, project/decisions (D26), status, work-tracker; agent/handoff, activity
+
+## [2026-11-08] sync | SP3b rifinitura visiva
+- Aggiornate: modules/ui, project/decisions (D27), status, work-tracker; agent/handoff, activity

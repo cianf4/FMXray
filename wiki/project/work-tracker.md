@@ -27,6 +27,7 @@ confidence: medium
 
 | Date | Work item | Verification | Evidence |
 | --- | --- | --- | --- |
+| 2026-11-08 | SP3b rifinitura visiva: fondo nero e accento `#3ea6ff`, Inter 11pt, tabella a tutta larghezza con pillole e soldi compatti, filtri "CA ≥"/"PA ≥", hover nel foglio di stile, barra laterale sovrapposta, scheda QML con esagono delle 6 aree | `uv run pytest` → 271 passed | [ui](../modules/ui.md) |
 | 2026-11-07 | SP3b: tre proposte (Claude, impeccable, taste-skill), scelta A con accento blu; riordino (2 righe, chip, linguette, barra laterale, testo a Ctrl+K, scheda compatta), icone, font, densità, animazioni | `uv run pytest` → 247 passed | [ui](../modules/ui.md) |
 | 2026-11-07 | SP3 unito in `main` (PR #5) | CI verde | merge `1939639` |
 | 2026-11-06 | SP3 Task 1–10: scheletro PySide6, `to_text`, `FilterState`, viste e cartelle (SQLite v3), tabella, scheda, popup dei filtri, finestra principale, watcher e import in background | `uv run pytest` → 209 passed (save reale incluso); ruff, mypy, lint-imports puliti | [ui](../modules/ui.md) |

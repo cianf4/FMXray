@@ -13,17 +13,17 @@ confidence: medium
 
 ## Current Work State
 
-- Status: SP3b implementato sul branch `feat/sp3b-design`, non committato (tranne spec e piano, `7233f3d`)
+- Status: SP3b sul branch `feat/sp3b-design` (già su origin, PR non ancora aperta); rifinitura visiva del 2026-11-08 implementata e non committata
 - Goal: prova dell'utente (`uv run fmxray-gui`), commit, push, PR
-- Last completed step: Task 7 del [piano SP3b](../../docs/superpowers/plans/2026-11-07-sp3b-design-grafico.md) e revisione finale inline
+- Last completed step: Task 7 del [piano di rifinitura](../../docs/superpowers/plans/2026-11-08-sp3b-rifinitura-visiva.md)
 - Current branch: `feat/sp3b-design`
-- Worktree: dirty (tutto SP3b: `src`, `tests`, `wiki`, `docs`, `pyproject.toml`, `uv.lock`, font in `src/fmxray/ui/fonts/`)
+- Worktree: dirty (rifinitura: `src`, `tests`, `wiki`, spec e piano del 2026-11-08, Inter al posto di Figtree in `src/fmxray/ui/fonts/`)
 
 ## Baton For Next Coding Agent
 
 | Order | Task | Start files | Done when | Verification command | Notes / blockers |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Prova dell'utente e commit/PR di SP3b | [ui](../modules/ui.md), `local/pr-sp3b.md` | PR aperta, CI verde | `gh pr checks` | `docs/design/PRODUCT.md` va committato (descrizione del prodotto per impeccable) |
+| 1 | Prova dell'utente, commit e PR di SP3b | [ui](../modules/ui.md), `local/pr-sp3b.md` | PR aperta, CI verde | `gh pr checks` | la scheda è QML: se su un PC non si vede, guardare l'errore mostrato nella scheda |
 | 2 | SP4 storico e newgen: brainstorming | spec madre §9, §12 | spec SP4 approvata | Not verified - documento | V5/V7 servono un nuovo `Roma.fm` |
 
 ## Blockers
