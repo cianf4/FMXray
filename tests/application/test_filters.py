@@ -145,3 +145,49 @@ def test_state_edits() -> None:
     assert with_range(state, "age", Range()).ranges == {}
     cleared = without_fields(state, frozenset({"traits", "pos_dc", "free_agent"}))
     assert cleared == FilterState(ranges={"age": Range(15, 21)}, texts={"club_name": "roma"})
+
+
+def test_describe_labels() -> None:
+    from fmxray.application.filters import Chip, describe
+
+    state = FilterState(
+        ranges={"age": Range(15, 21), "pa": Range(180, None), "ca": Range(None, 150)},
+        positions={"dc": 18, "stc": 15},
+        positions_mode=Mode.ALL,
+        choices={"traits": frozenset({"b", "a"})},
+        flags={"free_agent": True},
+        texts={"club_name": "roma"},
+        name_or_club="Ünal",
+    )
+    assert describe(state) == (
+        Chip("name_or_club", "“Ünal”"),
+        Chip("age", "age 15\u201321"),
+        Chip("ca", "ca ≤ 150"),
+        Chip("pa", "pa ≥ 180"),
+        Chip("club_name", "club name ~ roma"),
+        Chip("free_agent", "free agent: yes"),
+        Chip("positions", "DC ≥18 · ST ≥15 (all)"),
+        Chip("traits", "traits: a, b"),
+    )
+
+
+def test_remove_chip_each_kind() -> None:
+    from fmxray.application.filters import describe, remove_chip
+
+    state = FilterState(
+        ranges={"age": Range(15, 21)},
+        positions={"dc": 18},
+        choices={"traits": frozenset({"a"})},
+        flags={"free_agent": False},
+        texts={"club_name": "roma"},
+        name_or_club="x",
+    )
+    for chip in describe(state):
+        remaining = describe(remove_chip(state, chip.key))
+        assert [c.key for c in remaining] == [c.key for c in describe(state) if c.key != chip.key]
+
+
+def test_describe_empty() -> None:
+    from fmxray.application.filters import describe
+
+    assert describe(EMPTY) == ()

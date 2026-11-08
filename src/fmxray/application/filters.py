@@ -307,3 +307,67 @@ def without_fields(state: FilterState, names: frozenset[str]) -> FilterState:
         texts={k: v for k, v in state.texts.items() if k not in names},
         name_or_club=state.name_or_club,
     )
+
+
+# Active filters as removable chips.
+
+
+@dataclass(frozen=True)
+class Chip:
+    key: str  # a field name, "positions" or "name_or_club"
+    label: str
+
+
+EN_DASH = "\u2013"
+
+
+def _position_label(code: str) -> str:
+    return "ST" if code == "stc" else code.upper()
+
+
+def _range_label(name: str, value: Range) -> str:
+    label = name.replace("_", " ")
+    if value.low is not None and value.high is not None:
+        return f"{label} {value.low}{EN_DASH}{value.high}"
+    if value.low is not None:
+        return f"{label} ≥ {value.low}"
+    return f"{label} ≤ {value.high}"
+
+
+def describe(state: FilterState) -> tuple[Chip, ...]:
+    chips: list[Chip] = []
+    if state.name_or_club:
+        chips.append(Chip("name_or_club", f"“{state.name_or_club}”"))
+    positions_done = False
+    for name in _LAYOUT_ORDER:
+        label = name.replace("_", " ")
+        if name.startswith("pos_"):
+            if state.positions and not positions_done:
+                codes = [n.removeprefix("pos_") for n in _LAYOUT_ORDER if n.startswith("pos_")]
+                parts = [
+                    f"{_position_label(c)} ≥{state.positions[c]}"
+                    for c in codes
+                    if c in state.positions
+                ]
+                suffix = " (all)" if state.positions_mode is Mode.ALL else ""
+                chips.append(Chip("positions", " · ".join(parts) + suffix))
+            positions_done = True
+        elif name in state.ranges:
+            chips.append(Chip(name, _range_label(name, state.ranges[name])))
+        elif name in state.choices:
+            values = ", ".join(sorted(str(v) for v in state.choices[name]))
+            suffix = " (all)" if state.choice_modes.get(name) is Mode.ALL else ""
+            chips.append(Chip(name, f"{label}: {values}{suffix}"))
+        elif name in state.flags:
+            chips.append(Chip(name, f"{label}: {'yes' if state.flags[name] else 'no'}"))
+        elif name in state.texts:
+            chips.append(Chip(name, f"{label} ~ {state.texts[name]}"))
+    return tuple(chips)
+
+
+def remove_chip(state: FilterState, key: str) -> FilterState:
+    if key == "name_or_club":
+        return replace(state, name_or_club="")
+    if key == "positions":
+        return replace(state, positions={}, positions_mode=Mode.ANY)
+    return without_fields(state, frozenset({key}))
