@@ -27,7 +27,7 @@ def test_incomplete_record(qtbot: QtBot) -> None:
     card.show_player(make_meta(), values)
     assert card.name_label.text() == "-"
     assert not card.copy_button.isEnabled()
-    assert card.field_label("age").text() == "-"
+    assert card.summary_label.text().startswith("- · ")
 
 
 def test_attribute_tabs_show_all_attributes(qtbot: QtBot) -> None:
@@ -54,3 +54,39 @@ def test_clear_empties_card(qtbot: QtBot) -> None:
     assert card.name_label.text() == ""
     assert not card.copy_button.isEnabled()
     assert card.field_label("finishing").text() == "-"
+
+
+def test_compact_header(qtbot: QtBot) -> None:
+    card = _card(qtbot)
+    values = make_player_frame(1, ca=[131], pa=[188], natural_positions=[["DC", "DM"]]).to_dicts()[
+        0
+    ]
+    card.show_player(make_meta(), values)
+    assert card.summary_label.text() == f"{values['age']} · {values['club_name']} · DC, DM"
+    assert (card.ca_label.text(), card.pa_label.text()) == ("131", "188")
+
+
+def test_attributes_coloured_by_band(qtbot: QtBot) -> None:
+    from fmxray.ui.theme import TOKENS
+
+    card = _card(qtbot)
+    card.show_player(make_meta(), make_player_frame(1, finishing=[3], passing=[18]).to_dicts()[0])
+    assert TOKENS["band_1"] in card.field_label("finishing").styleSheet()
+    assert TOKENS["band_4"] in card.field_label("passing").styleSheet()
+    card.clear()
+    assert card.field_label("finishing").styleSheet() == ""
+
+
+def test_attributes_fit_a_narrow_card(qtbot: QtBot) -> None:
+    from PySide6.QtCore import QPoint
+
+    card = _card(qtbot)
+    card.resize(340, 900)
+    card.show()
+    card.show_player(make_meta(), make_player_frame(1).to_dicts()[0])
+    qtbot.wait(50)
+    for name in ("handling", "punching", "acceleration"):
+        label = card.field_label(name)
+        right = label.mapTo(card, QPoint(label.width(), 0)).x()
+        assert right <= card.width(), name
+        assert label.width() >= label.fontMetrics().horizontalAdvance(label.text()), name

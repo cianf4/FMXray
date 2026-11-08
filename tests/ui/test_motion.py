@@ -1,0 +1,34 @@
+from PySide6.QtCore import QEvent, QPointF
+from PySide6.QtGui import QEnterEvent
+from PySide6.QtWidgets import QApplication, QDialog, QPushButton
+from pytestqt.qtbot import QtBot
+
+from fmxray.ui.motion import HoverFade, fade_in, grow_in
+from fmxray.ui.theme import ANIMATION_MS
+
+
+def test_grow_in_ends_unconstrained(qtbot: QtBot) -> None:
+    button = QPushButton("age ≤ 21")
+    qtbot.addWidget(button)
+    animation = grow_in(button)
+    assert animation.duration() == ANIMATION_MS and button.maximumWidth() == 0
+    qtbot.waitUntil(lambda: button.maximumWidth() > 100_000, timeout=2000)
+
+
+def test_fade_in_reaches_full_opacity(qtbot: QtBot) -> None:
+    dialog = QDialog()
+    qtbot.addWidget(dialog)
+    animation = fade_in(dialog)
+    assert animation.endValue() == 1.0
+
+
+def test_hover_fade_tints_and_clears(qtbot: QtBot) -> None:
+    button = QPushButton("Save search")
+    qtbot.addWidget(button)
+    fade = HoverFade(button)
+    point = QPointF(5, 5)
+    QApplication.sendEvent(button, QEnterEvent(point, point, point))
+    qtbot.waitUntil(lambda: "background" in button.styleSheet(), timeout=2000)
+    QApplication.sendEvent(button, QEvent(QEvent.Type.Leave))
+    qtbot.waitUntil(lambda: button.styleSheet() == "", timeout=2000)
+    assert fade.parent() is button

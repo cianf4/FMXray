@@ -4,6 +4,7 @@ from collections.abc import Sequence
 
 import polars as pl
 from PySide6.QtCore import QSignalBlocker, Qt, Signal
+from PySide6.QtGui import QShowEvent
 from PySide6.QtWidgets import (
     QComboBox,
     QDialog,
@@ -37,6 +38,7 @@ from fmxray.application.filters import (
 )
 from fmxray.domain.search.parser import SEARCH_SCHEMA
 from fmxray.domain.search.spec import Value
+from fmxray.ui.motion import fade_in
 from fmxray.ui.pitch import PitchWidget
 from fmxray.ui.range_slider import RangeControl
 
@@ -173,6 +175,10 @@ class FiltersDialog(QDialog):
         self._edit(with_positions(self._state, self._pitch.selection(), mode))
 
     # --- public API -----------------------------------------------------------------
+
+    def showEvent(self, event: QShowEvent) -> None:
+        super().showEvent(event)
+        fade_in(self)
 
     def choice_fields(self) -> tuple[str, ...]:
         return tuple(self._lists)

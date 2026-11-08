@@ -54,7 +54,7 @@ def test_no_mark_when_verified() -> None:
     model = _model()
     horizontal = Qt.Orientation.Horizontal
     assert model.headerData(1, horizontal, Qt.ItemDataRole.ToolTipRole) is None
-    assert model.headerData(1, horizontal, Qt.ItemDataRole.DisplayRole) == "age"
+    assert model.headerData(1, horizontal, Qt.ItemDataRole.DisplayRole) == "Age"
 
 
 def test_new_mark() -> None:
@@ -81,3 +81,36 @@ def test_set_result_fast() -> None:
         timings.append(time.perf_counter() - start)
     assert model.rowCount() == _ROWS
     assert min(timings) < 0.5
+
+
+def test_numbers_right_aligned_in_number_font() -> None:
+    from PySide6.QtGui import QFont
+
+    from fmxray.ui.theme import TOKENS
+
+    model = _model()
+    alignment = model.data(model.index(0, 1), Qt.ItemDataRole.TextAlignmentRole)  # age
+    assert alignment == Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
+    font = model.data(model.index(0, 1), Qt.ItemDataRole.FontRole)
+    assert isinstance(font, QFont) and font.family() == TOKENS["font_numbers"]
+    assert model.data(model.index(0, 0), Qt.ItemDataRole.TextAlignmentRole) is None  # name
+
+
+def test_no_marks_when_every_column_is_unconfirmed() -> None:
+    model = PlayerTableModel()
+    every = {c: Provenance.UNCONFIRMED for c in _COLUMNS}
+    model.set_result(make_player_frame(3), _COLUMNS, every)
+    horizontal = Qt.Orientation.Horizontal
+    assert model.headerData(2, horizontal, Qt.ItemDataRole.DisplayRole) == "CA"
+    assert model.all_unconfirmed()
+
+
+def test_readable_headers_and_big_numbers() -> None:
+    from fmxray.ui.table_model import column_title, format_value
+
+    assert [column_title(c) for c in ("name", "ca", "natural_positions", "transfer_value")] == [
+        "Name", "CA", "Positions", "Value",
+    ]  # fmt: skip
+    assert column_title("long_shots") == "Long shots"
+    assert format_value(12_950_000) == "12,950,000"
+    assert format_value(1999) == "1999"

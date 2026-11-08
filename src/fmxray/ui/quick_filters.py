@@ -22,6 +22,7 @@ from fmxray.application.filters import (
     with_positions,
     with_range,
 )
+from fmxray.ui.icons import icon
 from fmxray.ui.pitch import PitchWidget
 from fmxray.ui.range_slider import RangeControl
 
@@ -35,6 +36,13 @@ class QuickFilters(QWidget):
         self._state = EMPTY
         self._ranges: dict[str, RangeControl] = {}
         layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        # The main way into the filters: first, and styled as the primary action.
+        self.all_button = QPushButton(icon("filters", "primary_text"), "", self)
+        self.all_button.setProperty("role", "primary")
+        self.all_button.setToolTip(self.tr("Every filter, by tab: positions, attributes, hidden…"))
+        self.all_button.clicked.connect(self.open_all_requested)
+        layout.addWidget(self.all_button)
         for name in QUICK_FIELDS:
             control = RangeControl(name, self)
             control.range_changed.connect(self._range_edited)
@@ -46,6 +54,8 @@ class QuickFilters(QWidget):
         self.pitch.selection_changed.connect(self._positions_edited)
         positions = QToolButton(self)
         positions.setText(self.tr("Positions"))
+        positions.setIcon(icon("positions"))
+        positions.setToolButtonStyle(positions.toolButtonStyle().ToolButtonTextBesideIcon)
         positions.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         menu = QMenu(positions)
         action = QWidgetAction(menu)
@@ -58,9 +68,6 @@ class QuickFilters(QWidget):
         self.name_edit.setPlaceholderText(self.tr("Name or club"))
         self.name_edit.textChanged.connect(self._name_edited)
         layout.addWidget(self.name_edit, 1)
-        self.all_button = QPushButton(self)
-        self.all_button.clicked.connect(self.open_all_requested)
-        layout.addWidget(self.all_button)
         self.set_active_count(0)
 
     def _edit(self, state: FilterState) -> None:
@@ -89,7 +96,12 @@ class QuickFilters(QWidget):
         self.pitch.set_selection(state.positions)
 
     def set_active_count(self, count: int) -> None:
-        self.all_button.setText(self.tr("All filters… (%1 active)").replace("%1", str(count)))
+        text = (
+            self.tr("All filters · %1").replace("%1", str(count))
+            if count
+            else self.tr("All filters")
+        )
+        self.all_button.setText(text)
 
     def set_locked(self, locked: bool) -> None:
         for child in (*self._ranges.values(), self.pitch, self.name_edit):

@@ -4,7 +4,8 @@ from pathlib import Path
 
 import polars as pl
 import pytest
-from PySide6.QtCore import QItemSelectionModel, Qt
+from PySide6.QtCore import QItemSelectionModel, QSettings, Qt
+from PySide6.QtGui import QKeySequence
 from pytestqt.qtbot import QtBot
 
 from fmxray.application.app import App
@@ -14,6 +15,8 @@ from fmxray.application.session import BrowseSession
 from fmxray.bootstrap import build_app
 from fmxray.domain.search.parser import parse
 from fmxray.ui.main_window import MainWindow
+from fmxray.ui.settings import UiSettings
+from fmxray.ui.theme import Density, row_height
 from tests.application.fakes import FakeSaveSource, make_reading
 from tests.factories import make_player_frame
 
@@ -38,8 +41,12 @@ def env(tmp_path: Path) -> _Env:
     return _Env(tmp_path)
 
 
+def _settings(env: _Env) -> UiSettings:
+    return UiSettings(QSettings(str(env.tmp_path / "ui.ini"), QSettings.Format.IniFormat))
+
+
 def _window(qtbot: QtBot, env: _Env) -> MainWindow:
-    window = MainWindow(env.app, BrowseSession(env.app))
+    window = MainWindow(env.app, BrowseSession(env.app), _settings(env))
     qtbot.addWidget(window)
     window.show()
     return window
@@ -83,6 +90,7 @@ def test_age_pa_from_controls_match_cli(qtbot: QtBot, env: _Env) -> None:
 def test_text_bar_error_shown_table_unchanged(qtbot: QtBot, env: _Env) -> None:
     env.import_save(make_player_frame(3))
     window = _window(qtbot, env)
+    window.show_text_bar(True)
     qtbot.keyClicks(window.text_bar, "finishng>15")
     assert window.text_error.isVisibleTo(window)
     assert "finishing" in window.text_error.text()
@@ -97,6 +105,7 @@ def test_text_bar_error_shown_table_unchanged(qtbot: QtBot, env: _Env) -> None:
 def test_advanced_text_locks_controls(qtbot: QtBot, env: _Env) -> None:
     env.import_save(make_player_frame(3))
     window = _window(qtbot, env)
+    window.show_text_bar(True)
     qtbot.keyClicks(window.text_bar, "age<2 or ca>101")
     qtbot.waitUntil(lambda: window.model.rowCount() == 2)
     assert not window.filters_dialog.tabs.isEnabled()
@@ -156,14 +165,17 @@ def test_saved_search_shows_new_count(
     env.import_save(make_player_frame(3, pa=[185, 150, 150]))
     env.import_save(make_player_frame(3, pa=[185, 185, 150]), day=20)
     window = _window(qtbot, env)
+    window.show_text_bar(True)
     qtbot.keyClicks(window.text_bar, "pa>180")
     monkeypatch.setattr(
         "fmxray.ui.main_window.QInputDialog.getText", lambda *a, **k: ("wonderkids", True)
     )
     window.save_search()
-    item = window.saved_list.item(0)
+    item = window.sidebar.list.item(0)
     assert item is not None and item.text() == "wonderkids  +1"
-    window.saved_list.setCurrentRow(0)
+    assert window.sidebar.badge_text() == "+1"
+    window.sidebar.set_open(True, animate=False)
+    window.sidebar.list.setCurrentRow(0)
     qtbot.waitUntil(lambda: window.model.rowCount() == 2)
     assert window.session.active_saved == "wonderkids"
 
@@ -206,3 +218,69 @@ def test_follow_folder_imports_newest_and_watches(qtbot: QtBot, env: _Env) -> No
     assert window.watcher.target == folder
     career_id = env.app.catalog.find_career("Roma")
     assert career_id is not None and env.app.career_sources.get(career_id) == folder
+
+
+def test_text_bar_hidden_by_default_and_toggles(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    assert not window.text_row.isVisibleTo(window)
+    # Offscreen windows never become active, so the shortcut is fired directly.
+    assert window.text_shortcut.key() == QKeySequence("Ctrl+K")
+    window.text_shortcut.activated.emit()
+    assert window.text_row.isVisibleTo(window)
+    assert window.focusWidget() is window.text_bar
+    window.text_shortcut.activated.emit()
+    assert not window.text_row.isVisibleTo(window)
+
+
+def test_rows_above_table(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    above = [w for w in window.top_rows() if w.isVisibleTo(window)]
+    assert above == [window.career_bar, window.filter_bar]
+
+
+def test_chip_removal_updates_controls(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    window.quick.range_control("pa").set_range(Range(101, None), emit=True)
+    qtbot.waitUntil(lambda: window.model.rowCount() == 2)
+    assert window.chips.labels() == ["pa ≥ 101"]
+    window.filters_dialog.show()
+    window.chips.remove_button("pa").click()
+    qtbot.waitUntil(lambda: window.model.rowCount() == 3)
+    assert window.chips.labels() == []
+    assert window.quick.range_control("pa").range() == Range()
+    assert window.filters_dialog.state().ranges == {}
+
+
+def test_advanced_filter_chip(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    window.show_text_bar(True)
+    qtbot.keyClicks(window.text_bar, "age<2 or ca>101")
+    qtbot.waitUntil(lambda: window.model.rowCount() == 2)
+    window.show_text_bar(False)
+    assert window.chips.labels() == ["Advanced filter"]
+    window.chips.remove_button("advanced").click()
+    qtbot.waitUntil(lambda: window.model.rowCount() == 3)
+    assert window.session.advanced is None
+    assert window.filters_dialog.tabs.isEnabled()
+
+
+def test_view_tabs_change_columns(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    window.view_tabs.setCurrentIndex(1)  # Technical
+    assert window.model.columns == window.view_tabs.current_view().columns
+    assert "finishing" in window.model.columns
+
+
+def test_density_toggle_persists(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    window.density_button.click()
+    assert window.table.verticalHeader().defaultSectionSize() == row_height(Density.COMPACT)
+    again = _window(qtbot, env)
+    assert again.density_button.isChecked()
+    assert again.table.verticalHeader().defaultSectionSize() == row_height(Density.COMPACT)

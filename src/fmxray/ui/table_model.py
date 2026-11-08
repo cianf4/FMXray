@@ -5,7 +5,7 @@ from datetime import date
 
 import polars as pl
 from PySide6.QtCore import QAbstractTableModel, QModelIndex, QPersistentModelIndex, Qt, Signal
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QFont
 
 from fmxray.domain.fields import PLAYER_CATALOG, Provenance, Unit
 from fmxray.ui.theme import TOKENS, attribute_band
@@ -15,6 +15,21 @@ type _Index = QModelIndex | QPersistentModelIndex
 NEW_MARK = "● "
 UNCONFIRMED_MARK = " ⓘ"
 _RATED = frozenset(s.name for s in PLAYER_CATALOG.fields if s.unit is Unit.DISPLAY_1_20)
+
+
+BIG_NUMBER = 10_000  # from here on, thousands get a separator
+_TITLES = {
+    "ca": "CA", "pa": "PA", "club_name": "Club", "natural_positions": "Positions",
+    "accomplished_positions": "Other positions", "transfer_value": "Value", "contract_wage": "Wage",
+}  # fmt: skip
+
+
+def column_title(name: str) -> str:
+    if name in _TITLES:
+        return _TITLES[name]
+    if name.startswith("pos_"):
+        return "ST" if name == "pos_stc" else name.removeprefix("pos_").upper()
+    return name.replace("_", " ").capitalize()
 
 
 def format_value(value: object) -> str:
@@ -28,6 +43,8 @@ def format_value(value: object) -> str:
         return value.isoformat()
     if isinstance(value, float):
         return f"{value:g}"
+    if isinstance(value, int) and abs(value) >= BIG_NUMBER:
+        return f"{value:,}"
     return str(value)
 
 
@@ -41,6 +58,8 @@ class PlayerTableModel(QAbstractTableModel):
         self._uids: list[int] = []
         self._provenance: Mapping[str, Provenance] = {}
         self._new: frozenset[int] = frozenset()
+        self._numeric: frozenset[str] = frozenset()
+        self._number_font = QFont(TOKENS["font_numbers"])
 
     def set_result(
         self,
@@ -56,11 +75,17 @@ class PlayerTableModel(QAbstractTableModel):
         self._uids = frame["uid"].to_list()
         self._provenance = provenance
         self._new = new_uids
+        self._numeric = frozenset(c for c in self._columns if frame.schema[c].is_numeric())
         self.endResetModel()
 
     @property
     def columns(self) -> tuple[str, ...]:
         return self._columns
+
+    def all_unconfirmed(self) -> bool:
+        """True when every shown field is unconfirmed: then one note replaces per-column marks."""
+        known = [self._provenance[c] for c in self._columns if c in self._provenance]
+        return bool(known) and all(p is Provenance.UNCONFIRMED for p in known)
 
     def uid_at(self, row: int) -> int:
         return self._uids[row]
@@ -93,6 +118,11 @@ class PlayerTableModel(QAbstractTableModel):
             if self._columns[column] in _RATED and isinstance(value, int):
                 band = attribute_band(value)
                 return QColor(TOKENS[band]) if band else None
+        numeric = self._columns[column] in self._numeric
+        if role == Qt.ItemDataRole.TextAlignmentRole and numeric:
+            return Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
+        if role == Qt.ItemDataRole.FontRole and numeric:
+            return self._number_font
         if role == Qt.ItemDataRole.ToolTipRole and column == 0 and self._uids[row] in self._new:
             return self.tr("New since the previous snapshot")
         return None
@@ -105,7 +135,10 @@ class PlayerTableModel(QAbstractTableModel):
         name = self._columns[section]
         unconfirmed = self._provenance.get(name) is Provenance.UNCONFIRMED
         if role == Qt.ItemDataRole.DisplayRole:
-            return name + (UNCONFIRMED_MARK if unconfirmed else "")
+            marked = unconfirmed and not self.all_unconfirmed()
+            return column_title(name) + (UNCONFIRMED_MARK if marked else "")
+        if role == Qt.ItemDataRole.TextAlignmentRole and name in self._numeric:
+            return Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
         if role == Qt.ItemDataRole.ToolTipRole and unconfirmed:
             return self.tr("unconfirmed: the save reader has not verified this field for this game")
         return None
