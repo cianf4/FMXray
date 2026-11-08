@@ -15,6 +15,8 @@ type _Index = QModelIndex | QPersistentModelIndex
 NEW_MARK = "● "
 UNCONFIRMED_MARK = " ⓘ"
 _RATED = frozenset(s.name for s in PLAYER_CATALOG.fields if s.unit is Unit.DISPLAY_1_20)
+_MONEY = frozenset(s.name for s in PLAYER_CATALOG.fields if s.unit is Unit.MONEY_INTERNAL)
+PILL_ROLE = Qt.ItemDataRole.UserRole + 1  # the 1-20 value of rated columns, for the delegate
 
 
 BIG_NUMBER = 10_000  # from here on, thousands get a separator
@@ -46,6 +48,21 @@ def format_value(value: object) -> str:
     if isinstance(value, int) and abs(value) >= BIG_NUMBER:
         return f"{value:,}"
     return str(value)
+
+
+def format_money(value: int | None) -> str:
+    """'4.2M', '950K', '999': short enough for a column, the full value goes in the tooltip."""
+    if value is None:
+        return "-"
+    size = abs(value)
+    if round(size / 1_000, 1) >= 1_000:
+        scale, suffix = 1_000_000, "M"
+    elif size >= 1_000:
+        scale, suffix = 1_000, "K"
+    else:
+        return str(value)
+    sign = "-" if value < 0 else ""
+    return f"{sign}{size / scale:.1f}".removesuffix(".0") + suffix
 
 
 class PlayerTableModel(QAbstractTableModel):
@@ -107,8 +124,10 @@ class PlayerTableModel(QAbstractTableModel):
             return None
         row, column = index.row(), index.column()
         value = self._values[column][row]
+        name = self._columns[column]
+        money = name in _MONEY and isinstance(value, int) and not isinstance(value, bool)
         if role == Qt.ItemDataRole.DisplayRole:
-            text = format_value(value)
+            text = format_money(value) if isinstance(value, int) and money else format_value(value)
             if column == 0 and self._uids[row] in self._new:
                 return NEW_MARK + text
             return text
@@ -123,6 +142,10 @@ class PlayerTableModel(QAbstractTableModel):
             return Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
         if role == Qt.ItemDataRole.FontRole and numeric:
             return self._number_font
+        if role == PILL_ROLE:
+            return value if name in _RATED else None
+        if role == Qt.ItemDataRole.ToolTipRole and money:
+            return format_value(value)
         if role == Qt.ItemDataRole.ToolTipRole and column == 0 and self._uids[row] in self._new:
             return self.tr("New since the previous snapshot")
         return None

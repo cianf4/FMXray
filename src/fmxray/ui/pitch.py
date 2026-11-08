@@ -9,7 +9,7 @@ from fmxray.domain.fields import POSITIONS
 from fmxray.domain.search.parser import NATURAL_THRESHOLD, POSITION_THRESHOLD
 
 # (row, column) on a 7 x 3 grid, attack at the top.
-_PLACES: Mapping[str, tuple[int, int]] = {
+PLACES: Mapping[str, tuple[int, int]] = {
     "stc": (0, 1),
     "aml": (1, 0), "amc": (1, 1), "amr": (1, 2),
     "ml": (2, 0), "mc": (2, 1), "mr": (2, 2),
@@ -18,7 +18,7 @@ _PLACES: Mapping[str, tuple[int, int]] = {
     "sw": (5, 1),
     "gk": (6, 1),
 }  # fmt: skip
-assert set(_PLACES) == set(POSITIONS)
+assert set(PLACES) == set(POSITIONS)
 
 
 def position_label(code: str) -> str:
@@ -34,7 +34,7 @@ class PitchWidget(QWidget):
         self._selection: dict[str, int] = {}
         self._buttons: dict[str, QToolButton] = {}
         grid = QGridLayout(self)
-        for code, (row, column) in _PLACES.items():
+        for code, (row, column) in PLACES.items():
             button = QToolButton(self)
             button.setText(position_label(code))
             button.setMinimumWidth(64)

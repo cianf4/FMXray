@@ -4,12 +4,14 @@ import os
 from pathlib import Path
 
 import polars as pl
-from PySide6.QtCore import QModelIndex, QPoint, QSettings, QSize, Qt, QTimer
+from PySide6.QtCore import QEvent, QModelIndex, QObject, QPoint, QSettings, QSize, Qt, QTimer
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,
+    QFrame,
     QHBoxLayout,
+    QHeaderView,
     QInputDialog,
     QLabel,
     QLineEdit,
@@ -38,11 +40,11 @@ from fmxray.ui.filter_chips import FilterChips
 from fmxray.ui.filters_dialog import FiltersDialog
 from fmxray.ui.icons import icon
 from fmxray.ui.import_worker import ImportRunner
-from fmxray.ui.motion import HoverFade
 from fmxray.ui.player_card import PlayerCard
 from fmxray.ui.quick_filters import QuickFilters
 from fmxray.ui.saved_sidebar import SavedEntry, SavedSidebar
 from fmxray.ui.settings import UiSettings
+from fmxray.ui.table_delegate import AttributeDelegate
 from fmxray.ui.table_model import PlayerTableModel
 from fmxray.ui.theme import Density, row_height
 from fmxray.ui.view_tabs import ViewTabs
@@ -50,7 +52,8 @@ from fmxray.ui.watcher import SaveFolderWatcher
 
 FILTER_DEBOUNCE_MS = 150  # wait for the user to stop dragging or typing
 TEXT_BAR_SHORTCUT = "Ctrl+K"
-CARD_MIN_PX = 300
+CARD_MIN_PX = 320
+PANEL_GAP_PX = 10
 _EMPTY_FRAME = pl.DataFrame(schema={"uid": pl.Int64()})
 
 
@@ -98,15 +101,6 @@ class MainWindow(QMainWindow):
         self.text_shortcut.activated.connect(
             lambda: self.show_text_bar(not self.text_row.isVisible())
         )
-        buttons: list[QWidget] = [
-            *self.career_bar.findChildren(QPushButton),
-            *self.filter_bar.findChildren(QPushButton),
-            *self.career_bar.findChildren(QToolButton),
-            self.text_toggle,
-        ]
-        for button in buttons:
-            if button.property("role") != "primary":
-                HoverFade(button)
         self._apply_density(self.settings.density)
         self.sidebar.set_open(self.settings.sidebar_open, animate=False)
         self.sidebar.toggled.connect(self._sidebar_toggled)
@@ -206,14 +200,17 @@ class MainWindow(QMainWindow):
     def _body(self) -> QWidget:
         body = QWidget(self)
         row = QHBoxLayout(body)
-        row.setContentsMargins(0, 0, 0, 0)
-        self.sidebar = SavedSidebar(body)
+        row.setContentsMargins(0, 0, PANEL_GAP_PX, PANEL_GAP_PX)
+        row.setSpacing(PANEL_GAP_PX)
+        self.sidebar = SavedSidebar(body, body)
         self.sidebar.search_chosen.connect(self._saved_chosen)
         row.addWidget(self.sidebar)
         splitter = QSplitter(body)
-        center = QWidget(splitter)
+        splitter.setHandleWidth(PANEL_GAP_PX)
+        splitter.setChildrenCollapsible(False)
+        self.table_panel = center = self._panel(splitter)
         column = QVBoxLayout(center)
-        column.setContentsMargins(0, 0, 0, 0)
+        column.setContentsMargins(4, 4, 4, 4)
         column.setSpacing(0)
         self.view_tabs = ViewTabs(center)
         self.view_tabs.view_chosen.connect(self._set_view)
@@ -228,22 +225,63 @@ class MainWindow(QMainWindow):
         self.table.setSelectionMode(QTableView.SelectionMode.SingleSelection)
         self.table.verticalHeader().hide()
         self.table.setShowGrid(False)
+        self.table.setMouseTracking(True)  # hover highlight
+        self._content_widths: list[int] = []
+        self._fitted_columns: tuple[str, ...] = ()
+        self.table.viewport().installEventFilter(self)
+        self.table.setItemDelegate(AttributeDelegate(self.table))
         header = self.table.horizontalHeader()
         header.setSortIndicatorShown(True)
+        header.setDefaultAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         header.sectionClicked.connect(self._header_clicked)
         header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         header.customContextMenuRequested.connect(self._column_menu)
         self.table.selectionModel().currentRowChanged.connect(lambda *_: self._show_selected())
         column.addWidget(self.table, 1)
 
-        self.card = PlayerCard(splitter)
-        self.card.setObjectName("playerCard")
-        self.card.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.card_panel = self._panel(splitter)
+        card_box = QVBoxLayout(self.card_panel)
+        card_box.setContentsMargins(0, 0, 0, 0)
+        self.card = PlayerCard(self.card_panel)
         self.card.setMinimumWidth(CARD_MIN_PX)
+        card_box.addWidget(self.card)
         splitter.setStretchFactor(0, 1)
         row.addWidget(splitter, 1)
         self._fill_views()
         return body
+
+    def _panel(self, parent: QWidget) -> QFrame:
+        panel = QFrame(parent)
+        panel.setObjectName("panel")
+        return panel
+
+    def _fit_columns(self) -> None:
+        """Columns sized to their content, then the spare width shared out (see _spread)."""
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+        self.table.resizeColumnsToContents()
+        header = self.table.horizontalHeader()
+        self._content_widths = [header.sectionSize(i) for i in range(header.count())]
+        self._fitted_columns = self.model.columns
+        self._spread_columns()
+
+    def _spread_columns(self) -> None:
+        """Like a web table at 100% width: each column grows in proportion to its content."""
+        widths = self._content_widths
+        total, room = sum(widths), self.table.viewport().width()
+        if not widths or total >= room or len(widths) != self.model.columnCount():
+            return
+        header = self.table.horizontalHeader()
+        used = 0
+        for i, width in enumerate(widths[:-1]):
+            grown = width * room // total
+            header.resizeSection(i, grown)
+            used += grown
+        header.resizeSection(len(widths) - 1, room - used)
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if watched is self.table.viewport() and event.type() == QEvent.Type.Resize:
+            self._spread_columns()
+        return super().eventFilter(watched, event)
 
     def _density_toggled(self, compact: bool) -> None:
         density = Density.COMPACT if compact else Density.MEDIUM
@@ -389,6 +427,8 @@ class MainWindow(QMainWindow):
             return
         new = self.session.new_uids()
         self.model.set_result(result.frame, self.session.view.columns, result.meta.provenance, new)
+        if self.model.columns != self._fitted_columns:  # filtering keeps widths: no jumping
+            self._fit_columns()
         players = result.total
         self.info_label.setText(
             self.tr("%1 players · game date %2")
@@ -472,6 +512,7 @@ class MainWindow(QMainWindow):
             self.model.set_result(
                 self._result.frame, view.columns, meta.provenance, self.session.new_uids()
             )
+            self._fit_columns()
             self._select_uid(selected)
 
     def _column_menu(self, point: QPoint) -> None:

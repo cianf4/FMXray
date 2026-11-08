@@ -26,6 +26,9 @@ from fmxray.ui.icons import icon
 from fmxray.ui.pitch import PitchWidget
 from fmxray.ui.range_slider import RangeControl
 
+MIN_ONLY_FIELDS = frozenset({"ca", "pa"})  # the full range is in the dialog
+QUICK_EDIT_PX = 64  # free-text boxes (age) stay narrow in the strip
+
 
 class QuickFilters(QWidget):
     state_changed = Signal(object)  # FilterState
@@ -44,9 +47,13 @@ class QuickFilters(QWidget):
         self.all_button.clicked.connect(self.open_all_requested)
         layout.addWidget(self.all_button)
         for name in QUICK_FIELDS:
-            control = RangeControl(name, self)
+            min_only = name in MIN_ONLY_FIELDS
+            control = RangeControl(name, self, min_only=min_only)
             control.range_changed.connect(self._range_edited)
-            layout.addWidget(QLabel(name.upper() if len(name) == 2 else name.capitalize(), self))
+            for edit in control.findChildren(QLineEdit):
+                edit.setMaximumWidth(QUICK_EDIT_PX)
+            title = name.upper() if len(name) == 2 else name.capitalize()
+            layout.addWidget(QLabel(f"{title} \u2265" if min_only else title, self))  # ≥
             layout.addWidget(control)
             self._ranges[name] = control
 

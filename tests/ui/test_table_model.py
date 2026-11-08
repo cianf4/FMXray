@@ -114,3 +114,20 @@ def test_readable_headers_and_big_numbers() -> None:
     assert column_title("long_shots") == "Long shots"
     assert format_value(12_950_000) == "12,950,000"
     assert format_value(1999) == "1999"
+
+
+def test_format_money() -> None:
+    from fmxray.ui.table_model import format_money
+
+    cases = {None: "-", 999: "999", 950_000: "950K", 12_500: "12.5K", 4_200_000: "4.2M",
+             999_999: "1M", -2_500: "-2.5K"}  # fmt: skip
+    assert {value: format_money(value) for value in cases} == cases
+
+
+def test_money_tooltip_is_full(qtbot: QtBot) -> None:
+    model = PlayerTableModel()
+    frame = make_player_frame(1, transfer_value=[187_061_600])
+    model.set_result(frame, ("name", "transfer_value"), {})
+    index = model.index(0, 1)
+    assert model.data(index, Qt.ItemDataRole.DisplayRole) == "187.1M"
+    assert model.data(index, Qt.ItemDataRole.ToolTipRole) == "187,061,600"

@@ -38,3 +38,30 @@ def test_open_all(qtbot: QtBot) -> None:
     quick = _quick(qtbot)
     with qtbot.waitSignal(quick.open_all_requested):
         quick.all_button.click()
+
+
+def test_min_only_control(qtbot: QtBot) -> None:
+    from PySide6.QtWidgets import QSpinBox
+
+    from fmxray.ui.range_slider import RangeControl
+
+    control = RangeControl("ca", min_only=True)
+    qtbot.addWidget(control)
+    boxes = control.findChildren(QSpinBox)
+    assert len(boxes) == 1
+    assert boxes[0].specialValueText() == "min"  # shown while no minimum is set
+    boxes[0].setValue(150)
+    assert control.range() == Range(150, None)
+    control.set_range(Range(120, 180))
+    assert boxes[0].value() == 120
+    assert control.range() == Range(120, None)
+
+
+def test_quick_ca_is_min_only(qtbot: QtBot) -> None:
+    from PySide6.QtWidgets import QLineEdit, QSpinBox
+
+    quick = QuickFilters()
+    qtbot.addWidget(quick)
+    assert len(quick.range_control("ca").findChildren(QSpinBox)) == 1
+    assert len(quick.range_control("pa").findChildren(QSpinBox)) == 1
+    assert len(quick.range_control("age").findChildren(QLineEdit)) == 2  # age: min and max

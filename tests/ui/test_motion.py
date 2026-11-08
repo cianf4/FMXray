@@ -1,9 +1,7 @@
-from PySide6.QtCore import QEvent, QPointF
-from PySide6.QtGui import QEnterEvent
-from PySide6.QtWidgets import QApplication, QDialog, QPushButton
+from PySide6.QtWidgets import QDialog, QPushButton
 from pytestqt.qtbot import QtBot
 
-from fmxray.ui.motion import HoverFade, fade_in, grow_in
+from fmxray.ui.motion import fade_in, grow_in
 from fmxray.ui.theme import ANIMATION_MS
 
 
@@ -20,15 +18,3 @@ def test_fade_in_reaches_full_opacity(qtbot: QtBot) -> None:
     qtbot.addWidget(dialog)
     animation = fade_in(dialog)
     assert animation.endValue() == 1.0
-
-
-def test_hover_fade_tints_and_clears(qtbot: QtBot) -> None:
-    button = QPushButton("Save search")
-    qtbot.addWidget(button)
-    fade = HoverFade(button)
-    point = QPointF(5, 5)
-    QApplication.sendEvent(button, QEnterEvent(point, point, point))
-    qtbot.waitUntil(lambda: "background" in button.styleSheet(), timeout=2000)
-    QApplication.sendEvent(button, QEvent(QEvent.Type.Leave))
-    qtbot.waitUntil(lambda: button.styleSheet() == "", timeout=2000)
-    assert fade.parent() is button

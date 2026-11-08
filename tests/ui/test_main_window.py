@@ -115,7 +115,7 @@ def test_selection_shows_card(qtbot: QtBot, env: _Env) -> None:
     env.import_save(make_player_frame(3))
     window = _window(qtbot, env)
     _select(window, 0)
-    assert window.card.name_label.text() == "Mile Svilar"  # highest ca first
+    assert window.card.model.property("name") == "Mile Svilar"  # highest ca first
 
 
 def test_reload_keeps_filters_sort_selection(qtbot: QtBot, env: _Env) -> None:
@@ -141,7 +141,7 @@ def test_reload_clears_card_when_player_gone(qtbot: QtBot, env: _Env) -> None:
     env.import_save(make_player_frame(1, uid=[5000]), day=20)
     window.reload_snapshot()
     assert window.selected_uid() is None
-    assert window.card.name_label.text() == ""
+    assert window.card.model.property("name") == ""
 
 
 def test_export_csv_all_filtered_rows(
@@ -284,3 +284,58 @@ def test_density_toggle_persists(qtbot: QtBot, env: _Env) -> None:
     again = _window(qtbot, env)
     assert again.density_button.isChecked()
     assert again.table.verticalHeader().defaultSectionSize() == row_height(Density.COMPACT)
+
+
+def test_table_fills_width(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    window.resize(1600, 900)
+    window.show()
+    qtbot.waitExposed(window)
+    header = window.table.horizontalHeader()
+    used = sum(header.sectionSize(i) for i in range(header.count()))
+    assert abs(used - window.table.viewport().width()) <= 2
+
+
+def test_panels(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    assert window.table_panel.objectName() == window.card_panel.objectName() == "panel"
+    assert window.table_panel.isAncestorOf(window.table)
+    assert window.card_panel.isAncestorOf(window.card)
+
+
+def test_open_sidebar_does_not_move_table(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    window.resize(1400, 800)
+    window.show()
+    qtbot.waitExposed(window)
+    before = window.table.geometry()
+    window.sidebar.set_open(True, animate=False)
+    assert window.table.geometry() == before
+    assert not window.sidebar.panel.isHidden()
+
+
+def test_extra_width_is_shared(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3))
+    window = _window(qtbot, env)
+    window.resize(1600, 900)
+    window.show()
+    qtbot.waitExposed(window)
+    name = window.model.columns.index("name")
+    share = window.table.horizontalHeader().sectionSize(name) / window.table.viewport().width()
+    assert share < 0.4  # the spare width is spread, not all given to one column
+
+
+def test_columns_keep_width_when_filtering(qtbot: QtBot, env: _Env) -> None:
+    env.import_save(make_player_frame(3, name=["Zed", "Bartholomew Longname-Fether", "Quill"]))
+    window = _window(qtbot, env)
+    window.resize(1600, 900)
+    window.show()
+    qtbot.waitExposed(window)
+    header = window.table.horizontalHeader()
+    before = [header.sectionSize(i) for i in range(header.count())]
+    window.quick.name_edit.setText("Zed")
+    qtbot.waitUntil(lambda: window.model.rowCount() == 1)
+    assert [header.sectionSize(i) for i in range(header.count())] == before

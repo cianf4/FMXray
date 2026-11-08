@@ -12,34 +12,37 @@ from string import Template
 from PySide6.QtGui import QFontDatabase
 
 TOKENS: Mapping[str, str] = {
-    # Proposal A "Pitch-side" with C's blue accent, chosen by the user on 2026-11-07.
-    "background": "#15181d",
-    "surface": "#1d2128",
-    "raised": "#252a33",
-    "text": "#e8eaee",
-    "text_muted": "#9aa3b2",
-    "border": "#323843",
-    "selection": "#23384a",
-    "accent": "#4a8ad6",
-    "primary": "#4a8ad6",
-    "primary_text": "#ffffff",
-    "chip_background": "#233040",
-    "chip_text": "#cfe3ff",
+    # Neutral black ground and bright blue accent, chosen by the user on 2026-11-08.
+    "background": "#0e0f12",
+    "surface": "#16181d",  # panels
+    "raised": "#1f2228",
+    "text": "#eef1f5",
+    "text_muted": "#8f97a6",
+    "border": "#272a31",
+    "selection": "#163450",
+    "accent": "#3ea6ff",
+    "primary": "#3ea6ff",
+    "primary_hover": "#6bbaff",
+    "primary_text": "#06223a",
+    "chip_background": "#15314a",
+    "chip_text": "#bfe1ff",
     "unconfirmed": "#d9a441",
     "estimate": "#f07070",
     "error": "#f07070",
-    "new": "#4a8ad6",
+    "new": "#3ea6ff",
+    "shadow": "#000000",  # QML card shadows
     "band_1": "#d0605a",  # attributes 1-5
     "band_2": "#e3a04b",  # 6-10
     "band_3": "#d9dde4",  # 11-15
     "band_4": "#5ccf8f",  # 16-20
-    "font_text": "Figtree",
+    "font_text": "Inter",
     "font_numbers": "JetBrains Mono",
-    "font_size": "10pt",
+    "font_size": "11pt",
     "spacing": "6px",
     "radius": "6px",
-    "row_height_medium": "26",
-    "row_height_compact": "20",
+    "panel_radius": "10px",
+    "row_height_medium": "30",
+    "row_height_compact": "24",
 }
 
 _BANDS = ((5, "band_1"), (10, "band_2"), (15, "band_3"), (20, "band_4"))
@@ -48,8 +51,12 @@ _QSS = Template("""
 QWidget { background: $background; color: $text; font-family: "$font_text"; font-size: $font_size;
           selection-background-color: $selection; selection-color: $text; }
 QWidget#careerBar { background: $surface; border-bottom: 1px solid $border; }
-QWidget#savedSidebar { background: $surface; border-right: 1px solid $border; }
-QWidget#playerCard, QDialog { background: $surface; }
+QWidget#savedSidebar { background: $background; }
+QFrame#savedPanel { background: $surface; border: 1px solid $border;
+          border-radius: $panel_radius; }
+QDialog { background: $surface; }
+QFrame#panel { background: $surface; border: 1px solid $border; border-radius: $panel_radius; }
+QFrame#panel QWidget { background: transparent; }
 QToolTip { background: $raised; color: $text; border: 1px solid $border; padding: 4px 8px; }
 QMenu { background: $raised; border: 1px solid $border; padding: 4px; }
 QMenu::item { padding: 5px 18px; border-radius: $radius; }
@@ -57,11 +64,13 @@ QMenu::item:selected { background: $selection; }
 
 QPushButton, QToolButton { background: $raised; color: $text; border: 1px solid $border;
           border-radius: $radius; padding: 5px 12px; }
+QPushButton:hover, QToolButton:hover { background: $border; }
 QPushButton:pressed, QToolButton:pressed, QToolButton:checked { background: $selection;
           border-color: $accent; }
 QPushButton:disabled, QToolButton:disabled { color: $text_muted; }
 QPushButton[role="primary"] { background: $primary; color: $primary_text; border-color: $primary;
           font-weight: 600; padding: 5px 14px; }
+QPushButton[role="primary"]:hover { background: $primary_hover; border-color: $primary_hover; }
 QToolButton[role="chip"] { background: $chip_background; color: $chip_text; border: none;
           border-radius: 12px; padding: 3px 10px; }
 
@@ -86,10 +95,11 @@ QTabBar::tab:selected { color: $text; border-bottom-color: $accent; }
 QTabBar::tab:hover { color: $text; }
 QTabWidget::pane { border: none; border-top: 1px solid $border; }
 
-QTableView { background: $background; border: none; gridline-color: $border; }
+QTableView { background: transparent; border: none; gridline-color: $border; }
 QTableView::item { border-bottom: 1px solid $surface; padding: 0 8px; }
+QTableView::item:hover { background: $raised; }
 QTableView::item:selected { background: $selection; color: $text; }
-QHeaderView::section { background: $surface; color: $text_muted; padding: 6px 8px; border: none;
+QHeaderView::section { background: transparent; color: $text_muted; padding: 6px 8px; border: none;
           border-bottom: 1px solid $border; }
 
 QListWidget { background: transparent; border: none; }
@@ -98,8 +108,8 @@ QListWidget::item:selected { background: $selection; color: $text; }
 QGroupBox { border: none; margin-top: 18px; color: $text_muted; }
 QGroupBox::title { subcontrol-origin: margin; left: 0; padding: 0; color: $text_muted; }
 
-QScrollBar:vertical { background: $background; width: 10px; margin: 0; }
-QScrollBar:horizontal { background: $background; height: 10px; margin: 0; }
+QScrollBar:vertical { background: transparent; width: 10px; margin: 0; }
+QScrollBar:horizontal { background: transparent; height: 10px; margin: 0; }
 QScrollBar::handle { background: $raised; border-radius: 5px; min-height: 24px; min-width: 24px; }
 QScrollBar::handle:hover { background: $border; }
 QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; }
@@ -117,9 +127,10 @@ def attribute_band(value: int | None) -> str | None:
     return next((band for top, band in _BANDS if value <= top), "band_4")
 
 
-ANIMATION_MS = 150
+ANIMATION_MS = 150  # widgets
+CARD_ANIMATION_MS = 250  # the QML player card, drawn on the GPU
 FONTS_DIR = Path(__file__).parent / "fonts"
-_FONT_FILES = ("Figtree-Variable.ttf", "JetBrainsMono-Variable.ttf")
+_FONT_FILES = ("Inter-Variable.ttf", "JetBrainsMono-Variable.ttf")
 
 
 class Density(StrEnum):

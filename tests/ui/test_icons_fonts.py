@@ -12,7 +12,7 @@ def test_every_icon_exists(qtbot: QtBot) -> None:
 
 
 def test_fonts_load(qtbot: QtBot) -> None:
-    assert load_fonts() == ("Figtree", "JetBrains Mono")
+    assert load_fonts() == ("Inter", "JetBrains Mono")
 
 
 def test_missing_font_falls_back(qtbot: QtBot, tmp_path: Path) -> None:
