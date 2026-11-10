@@ -8,6 +8,7 @@ from PySide6.QtCore import QAbstractTableModel, QModelIndex, QPersistentModelInd
 from PySide6.QtGui import QColor, QFont
 
 from fmxray.domain.fields import PLAYER_CATALOG, Provenance, Unit
+from fmxray.domain.text import humanize
 from fmxray.ui.theme import TOKENS, attribute_band
 
 type _Index = QModelIndex | QPersistentModelIndex
@@ -16,6 +17,7 @@ NEW_MARK = "● "
 UNCONFIRMED_MARK = " ⓘ"
 _RATED = frozenset(s.name for s in PLAYER_CATALOG.fields if s.unit is Unit.DISPLAY_1_20)
 _MONEY = frozenset(s.name for s in PLAYER_CATALOG.fields if s.unit is Unit.MONEY_INTERNAL)
+ENUM_FIELDS = frozenset({"contract_squad_status", "traits"})  # snake_case values from the save
 PILL_ROLE = Qt.ItemDataRole.UserRole + 1  # the 1-20 value of rated columns, for the delegate
 
 
@@ -31,7 +33,7 @@ def column_title(name: str) -> str:
         return _TITLES[name]
     if name.startswith("pos_"):
         return "ST" if name == "pos_stc" else name.removeprefix("pos_").upper()
-    return name.replace("_", " ").capitalize()
+    return humanize(name)
 
 
 def format_value(value: object) -> str:
@@ -63,6 +65,17 @@ def format_money(value: int | None) -> str:
         return str(value)
     sign = "-" if value < 0 else ""
     return f"{sign}{size / scale:.1f}".removesuffix(".0") + suffix
+
+
+def format_field(name: str, value: object) -> str:
+    """A field's value as shown: compact money, readable enum values, else format_value."""
+    if name in _MONEY and isinstance(value, int) and not isinstance(value, bool):
+        return format_money(value)
+    if name in ENUM_FIELDS and isinstance(value, str):
+        return humanize(value)
+    if name in ENUM_FIELDS and isinstance(value, list):
+        return ", ".join(humanize(str(v)) for v in value)
+    return format_value(value)
 
 
 class PlayerTableModel(QAbstractTableModel):
@@ -127,7 +140,7 @@ class PlayerTableModel(QAbstractTableModel):
         name = self._columns[column]
         money = name in _MONEY and isinstance(value, int) and not isinstance(value, bool)
         if role == Qt.ItemDataRole.DisplayRole:
-            text = format_money(value) if isinstance(value, int) and money else format_value(value)
+            text = format_field(name, value)
             if column == 0 and self._uids[row] in self._new:
                 return NEW_MARK + text
             return text

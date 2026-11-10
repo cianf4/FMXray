@@ -30,6 +30,7 @@ def test_new_tokens_present() -> None:
     assert TOKENS["background"] == "#0e0f12"
     assert TOKENS["font_size"] == "11pt"
     assert "panel_radius" in TOKENS
+    assert TOKENS["band_3"] == TOKENS["value"] == "#a8d4ff"  # values apart from labels
 
 
 def test_stylesheet_has_hover_and_panel() -> None:

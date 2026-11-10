@@ -33,7 +33,8 @@ TOKENS: Mapping[str, str] = {
     "shadow": "#000000",  # QML card shadows
     "band_1": "#d0605a",  # attributes 1-5
     "band_2": "#e3a04b",  # 6-10
-    "band_3": "#d9dde4",  # 11-15
+    "band_3": "#a8d4ff",  # 11-15, same light blue as other values
+    "value": "#a8d4ff",  # values next to a muted label (card rows)
     "band_4": "#5ccf8f",  # 16-20
     "font_text": "Inter",
     "font_numbers": "JetBrains Mono",

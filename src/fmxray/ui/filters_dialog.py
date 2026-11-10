@@ -38,6 +38,7 @@ from fmxray.application.filters import (
 )
 from fmxray.domain.search.parser import SEARCH_SCHEMA
 from fmxray.domain.search.spec import Value
+from fmxray.domain.text import humanize
 from fmxray.ui.motion import fade_in
 from fmxray.ui.pitch import PitchWidget
 from fmxray.ui.range_slider import RangeControl
@@ -108,7 +109,7 @@ class FiltersDialog(QDialog):
                 if name.startswith("pos_"):
                     self._controls[name] = self._pitch
                     continue
-                form.addRow(name.replace("_", " "), self._control(name, box))
+                form.addRow(humanize(name), self._control(name, box))
             grid.addWidget(box, 1 + index // BLOCKS_PER_ROW, index % BLOCKS_PER_ROW)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
@@ -196,7 +197,9 @@ class FiltersDialog(QDialog):
             options.clear()
             chosen = self._state.choices.get(name, frozenset())
             for value in values:
-                item = QListWidgetItem(str(value), options)
+                item = QListWidgetItem(
+                    humanize(value) if isinstance(value, str) else str(value), options
+                )
                 item.setData(Qt.ItemDataRole.UserRole, value)
                 item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
                 checked = value in chosen

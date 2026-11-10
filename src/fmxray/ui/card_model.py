@@ -11,8 +11,9 @@ from PySide6.QtGui import QGuiApplication
 from fmxray.domain.fields import PLAYER_CATALOG, POSITIONS, FieldGroup, Provenance, Unit
 from fmxray.domain.profile import profile
 from fmxray.domain.snapshot import SnapshotMeta
+from fmxray.domain.text import humanize
 from fmxray.ui.pitch import PLACES, position_label
-from fmxray.ui.table_model import format_money, format_value
+from fmxray.ui.table_model import format_field, format_value
 from fmxray.ui.theme import TOKENS, attribute_band
 
 ABILITY_SCALE = 200  # CA and PA run 1-200
@@ -52,12 +53,6 @@ def summary_line(values: Mapping[str, object]) -> str:
 def _rated_colour(value: object) -> str:
     band = attribute_band(value) if isinstance(value, int) else None
     return TOKENS[band] if band else TOKENS["text"]
-
-
-def _text(field: str, value: object) -> str:
-    if _UNITS.get(field) is Unit.MONEY_INTERNAL and isinstance(value, int):
-        return format_money(value)
-    return format_value(value)
 
 
 def _fraction(value: object) -> float:
@@ -150,11 +145,11 @@ class CardModel(QObject):
                         "title": self.tr(group),
                         "rows": [
                             {
-                                "label": field.replace("_", " "),
-                                "value": _text(field, self._values.get(field)),
+                                "label": humanize(field),
+                                "value": format_field(field, self._values.get(field)),
                                 "color": _rated_colour(self._values.get(field))
                                 if _UNITS.get(field) is Unit.DISPLAY_1_20
-                                else TOKENS["text"],
+                                else TOKENS["value"],
                             }
                             for field in fields
                         ],

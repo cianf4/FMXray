@@ -3,6 +3,7 @@ from typing import Any
 from pytestqt.qtbot import QtBot
 
 from fmxray.domain.fields import ATTRIBUTES, PERSONALITY, Provenance
+from fmxray.domain.text import humanize
 from fmxray.ui.card_model import CardModel
 from fmxray.ui.theme import TOKENS
 from tests.factories import make_meta, make_player_frame
@@ -55,7 +56,7 @@ def test_tabs_cover_all_fields(qtbot: QtBot) -> None:
         for row in group["rows"]
     }
     for name in (*ATTRIBUTES, *PERSONALITY):
-        assert name.replace("_", " ") in labels, name
+        assert humanize(name) in labels, name
     assert [tab["title"] for tab in _get(_model(), "tabs")] == [
         "Attributes",
         "Hidden",
@@ -71,8 +72,9 @@ def test_band_colours(qtbot: QtBot) -> None:
         for group in tab["groups"]
         for row in group["rows"]
     }
-    assert rows["finishing"]["color"] == TOKENS["band_1"]
-    assert rows["finishing"]["value"] == "3"
+    assert rows["Finishing"]["color"] == TOKENS["band_1"]
+    assert rows["Contract Squad Status"]["color"] == TOKENS["value"]  # text values stand apart too
+    assert rows["Finishing"]["value"] == "3"
 
 
 def test_unconfirmed_flag(qtbot: QtBot) -> None:

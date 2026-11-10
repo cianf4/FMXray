@@ -108,3 +108,16 @@ def test_counts_label(qtbot: QtBot) -> None:
     dialog = _dialog(qtbot)
     dialog.set_counts(3, 37)
     assert dialog.counts_label.text() == "3 active filters · 37 players"
+
+
+def test_names_and_options_are_readable(qtbot: QtBot) -> None:
+    from PySide6.QtWidgets import QLabel, QListWidget
+
+    dialog = _dialog(qtbot)
+    dialog.set_options("traits", ["moves_into_channels"])
+    options = dialog.findChildren(QListWidget)
+    texts = [o.item(i).text() for o in options for i in range(o.count())]
+    assert "Moves into Channels" in texts
+    assert dialog.checked_options("traits") == []  # raw values stay underneath
+    labels = {label.text() for label in dialog.findChildren(QLabel)}
+    assert "Long Shots" in labels and not any("_" in text for text in labels)

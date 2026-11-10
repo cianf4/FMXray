@@ -111,7 +111,7 @@ def test_readable_headers_and_big_numbers() -> None:
     assert [column_title(c) for c in ("name", "ca", "natural_positions", "transfer_value")] == [
         "Name", "CA", "Positions", "Value",
     ]  # fmt: skip
-    assert column_title("long_shots") == "Long shots"
+    assert column_title("long_shots") == "Long Shots"
     assert format_value(12_950_000) == "12,950,000"
     assert format_value(1999) == "1999"
 
@@ -131,3 +131,13 @@ def test_money_tooltip_is_full(qtbot: QtBot) -> None:
     index = model.index(0, 1)
     assert model.data(index, Qt.ItemDataRole.DisplayRole) == "187.1M"
     assert model.data(index, Qt.ItemDataRole.ToolTipRole) == "187,061,600"
+
+
+def test_enum_values_are_readable(qtbot: QtBot) -> None:
+    model = PlayerTableModel()
+    frame = make_player_frame(
+        1, contract_squad_status=["regular_starter"], traits=[["dives_into_tackles"]]
+    )
+    model.set_result(frame, ("name", "contract_squad_status", "traits"), {})
+    assert _display(model, 0, 1) == "Regular Starter"
+    assert _display(model, 0, 2) == "Dives into Tackles"
