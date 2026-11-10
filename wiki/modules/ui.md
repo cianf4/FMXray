@@ -58,6 +58,7 @@ flowchart LR
 
 ## Invariants
 - Colori solo in `theme.py` (`grep` di `#rrggbb` fuori da `theme.py` vuoto, file QML compresi: ricevono `theme`). Nella scheda QML niente `MultiEffect`: non si disegna senza GPU, le ombre sono rettangoli traslucidi.
+- Nomi dei campi e valori enum (`contract_squad_status`, `traits`) mostrati con `domain.text.humanize` in stile FM ("Off the Ball", "Regular Starter"); i valori grezzi restano nei dati e nei filtri. I valori accanto a un'etichetta grigia sono azzurri (`value`, `band_3` = `#a8d4ff`).
 - Le colonne della tabella si adattano al contenuto e lo spazio in più si divide in proporzione (`_spread_columns`, a ogni ridimensionamento). Su FM27 ogni campo è "unconfirmed": invece di un `ⓘ` per colonna c'è una sola nota nella riga di stato.
 - Barra a testo e controlli mostrano lo stesso filtro: `from_spec(to_spec(s)) == s` e `parse(to_text(spec)) == spec` (Hypothesis). Un testo che i controlli non sanno mostrare (es. `or` tra campi diversi) diventa `session.advanced` e blocca i controlli; un testo che non si legge mostra l'errore e lascia tabella e filtro com'erano.
 - Ogni campo di `SEARCH_SCHEMA` ha un controllo nel popup (`test_every_field_is_filterable`).

@@ -82,3 +82,4 @@ Log append-only.
 - **Validation:** `uv run pytest` → 271 passed (save reale incluso); ruff, mypy, lint-imports puliti; wheel con `ui/qml/*.qml` e Inter.
 - **Decisions:** D27; rulings nel ledger (ombre senza `MultiEffect`, spazio della tabella diviso in proporzione invece che tutto a Name, testo QML con rendering nativo).
 - **Follow-up:** prova dell'utente, commit, PR, SP4.
+- **2026-11-08, dopo la prova:** nomi e valori enum senza underscore in stile FM (`humanize`), valori in azzurrino `#a8d4ff`; errori QML in chiusura corretti (modello figlio della vista). `uv run pytest` → 275 passed.
